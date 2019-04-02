@@ -1,0 +1,34 @@
+import React from 'react';
+import { Link } from "react-router-dom";
+import { createStyles, withStyles, WithStyles } from '@material-ui/core';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+
+const styles = createStyles({
+  title: {
+    flexGrow: 1,
+  },
+  link: {
+    color: 'white',
+    textDecoration: 'none',
+  },
+});
+
+interface Props extends WithStyles<typeof styles> {}
+
+function Bar({ classes }: Props) {
+  return (
+    <AppBar position="static">
+      <Toolbar>
+        <Link to="/" className={classes.link}>
+          <Typography variant="h6" color="inherit" className={classes.title}>
+            Cubing
+          </Typography>
+        </Link>
+      </Toolbar>
+    </AppBar>
+  );
+}
+
+export default withStyles(styles)(Bar);
