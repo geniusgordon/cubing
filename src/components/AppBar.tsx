@@ -1,9 +1,10 @@
 import React from 'react';
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 import { createStyles, withStyles, WithStyles } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
 
 const styles = createStyles({
   title: {
@@ -21,11 +22,16 @@ function Bar({ classes }: Props) {
   return (
     <AppBar position="static">
       <Toolbar>
-        <Link to="/" className={classes.link}>
-          <Typography variant="h6" color="inherit" className={classes.title}>
+        <Typography variant="h6" color="inherit" className={classes.title}>
+          <Link to="/" className={classes.link}>
             Cubing
-          </Typography>
-        </Link>
+          </Link>
+        </Typography>
+        <Button color="inherit">
+          <Link to="/pll-recognition-trainer" className={classes.link}>
+            PllRecognitionTrainer
+          </Link>
+        </Button>
       </Toolbar>
     </AppBar>
   );
