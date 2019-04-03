@@ -66,9 +66,29 @@ function PllRecognitionTrainer({ classes }: Props) {
     }
   }
 
+  function handleKeyup(e: KeyboardEvent) {
+    if (e.key === ' ') {
+      nextCase();
+    }
+
+    if (e.key.match(/[a-zA-Z]/)) {
+      const guess = e.key.toUpperCase();
+      if (pllGroups.some(group => group.cases.includes(guess))) {
+        takeGuess(guess);
+      }
+    }
+  }
+
   React.useEffect(() => {
     nextCase();
   }, []);
+
+  React.useEffect(() => {
+    document.addEventListener('keyup', handleKeyup);
+    return () => {
+      document.removeEventListener('keyup', handleKeyup);
+    };
+  });
 
   return (
     <div className={classes.container}>
