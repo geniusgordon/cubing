@@ -2,6 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { createStyles, withStyles, WithStyles } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { toQueryString } from '../utils';
 
 const styles = createStyles({
   container: {
@@ -21,19 +22,26 @@ const styles = createStyles({
 interface Props extends WithStyles<typeof styles> {
   size?: number;
   alg: string;
+  stage?: string;
 }
 
-function CubeImage({ size = 200, alg, classes }: Props) {
+function CubeImage({ size = 200, alg, stage, classes }: Props) {
   const [loading, setLoading] = React.useState<boolean>(false);
   React.useEffect(() => {
     setLoading(true);
   }, [alg]);
 
+  const queryString = toQueryString({
+    fmt: 'svg',
+    case: alg,
+    stage,
+    size,
+  });
+
   return (
     <div className={classes.container}>
       <img
-        src={`
-  http://cube.crider.co.uk/visualcube.php?fmt=svg&size=${size}&case=${alg}`}
+        src={`http://cube.crider.co.uk/visualcube.php?${queryString}`}
         alt=""
         onLoad={() => {
           setLoading(false);

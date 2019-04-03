@@ -46,3 +46,10 @@ export function generateCase(alg: Alg, cn: ColorNeutrality): Alg {
     alg: preAuf + alg.alg + postAuf + cnRotation + yRotation,
   };
 }
+
+export function toQueryString(params: any): string {
+  return Object.keys(params)
+    .filter(key => typeof params[key] !== 'undefined')
+    .map(key => key + '=' + params[key])
+    .join('&');
+}
