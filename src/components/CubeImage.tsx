@@ -22,10 +22,11 @@ const styles = createStyles({
 interface Props extends WithStyles<typeof styles> {
   size?: number;
   alg: string;
+  view?: 'plan' | 'trans';
   stage?: string;
 }
 
-function CubeImage({ size = 200, alg, stage, classes }: Props) {
+function CubeImage({ size = 200, alg, view, stage, classes }: Props) {
   const [loading, setLoading] = React.useState<boolean>(false);
   React.useEffect(() => {
     setLoading(true);
@@ -34,6 +35,7 @@ function CubeImage({ size = 200, alg, stage, classes }: Props) {
   const queryString = toQueryString({
     fmt: 'svg',
     case: alg,
+    view,
     stage,
     size,
   });
