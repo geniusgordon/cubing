@@ -9,7 +9,7 @@ import AppBar from './components/AppBar';
 
 function Routes() {
   return (
-    <Router>
+    <Router basename="/cubing-tools">
       <AppBar />
       <Route path="/" exact component={Home} />
       <Route

@@ -19,7 +19,7 @@ const styles = createStyles({
 interface Props extends WithStyles<typeof styles> {}
 
 const PllRecognitionTrainerLink = (props: any) => (
-  <Link to="/pll-recognition-trainer" {...props} />
+  <Link to="/recognition-trainer/pll" {...props} />
 );
 
 function Bar({ classes }: Props) {
