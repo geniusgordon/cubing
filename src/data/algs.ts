@@ -1,9 +1,14 @@
 export interface Alg {
   name: string;
   alg: string;
-};
+}
 
-const pll: Alg[] = [
+export interface AlgGroup {
+  name: string;
+  cases: string[];
+}
+
+export const pll: Alg[] = [
   { name: 'Ua', alg: "(y2) M2 U M U2 M' U M2" },
   { name: 'Ub', alg: "(y2) M2 U' M U2 M' U' M2" },
   { name: 'Ab', alg: "(x') R U' R D2 R' U R D2 R2 (x)" },
@@ -33,4 +38,25 @@ const pll: Alg[] = [
   { name: 'Nb', alg: "R' U R U' R' F' U' F R U R' F R' F' R U' R" },
 ];
 
-export { pll };
+export const pllGroups: AlgGroup[] = [
+  {
+    name: 'Edge',
+    cases: ['U', 'Z', 'H'],
+  },
+  {
+    name: 'Corner',
+    cases: ['A', 'E'],
+  },
+  {
+    name: 'Adjacent',
+    cases: ['T', 'F', 'J', 'R'],
+  },
+  {
+    name: 'Diagonal',
+    cases: ['Y', 'V', 'N'],
+  },
+  {
+    name: 'G',
+    cases: ['G'],
+  },
+];

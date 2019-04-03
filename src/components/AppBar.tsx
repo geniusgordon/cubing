@@ -18,6 +18,10 @@ const styles = createStyles({
 
 interface Props extends WithStyles<typeof styles> {}
 
+const PllRecognitionTrainerLink = (props: any) => (
+  <Link to="/pll-recognition-trainer" {...props} />
+);
+
 function Bar({ classes }: Props) {
   return (
     <AppBar position="static">
@@ -27,10 +31,8 @@ function Bar({ classes }: Props) {
             Cubing
           </Link>
         </Typography>
-        <Button color="inherit">
-          <Link to="/pll-recognition-trainer" className={classes.link}>
-            PllRecognitionTrainer
-          </Link>
+        <Button color="inherit" component={PllRecognitionTrainerLink}>
+          PllRecognitionTrainer
         </Button>
       </Toolbar>
     </AppBar>
