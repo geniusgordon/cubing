@@ -1,12 +1,4 @@
-export interface Alg {
-  name: string;
-  alg: string;
-}
-
-export interface AlgGroup {
-  name: string;
-  cases: string[];
-}
+import { Alg, AlgGroup } from './types';
 
 export const pll: Alg[] = [
   { name: 'Ua', alg: "(y2) M2 U M U2 M' U M2" },

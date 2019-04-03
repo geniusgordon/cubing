@@ -3,10 +3,16 @@ import classNames from 'classnames';
 import { createStyles, withStyles, WithStyles } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormControl from '@material-ui/core/FormControl';
+import FormLabel from '@material-ui/core/FormLabel';
 import { red, green } from '@material-ui/core/colors';
 import CubeImage from '../../components/CubeImage';
 import { generateCase } from '../../utils';
-import { Alg, pll, pllGroups } from '../../data/algs';
+import { pll, pllGroups } from '../../data/algs';
+import { Alg, ColorNeutrality, TrainerHistory } from '../../data/types';
 
 const styles = createStyles({
   container: {
@@ -14,6 +20,9 @@ const styles = createStyles({
   },
   cubeImage: {
     cursor: 'pointer',
+  },
+  radioGroup: {
+    flexDirection: 'row',
   },
   buttonRow: {
     marginTop: 20,
@@ -34,21 +43,19 @@ const styles = createStyles({
   },
 });
 
-interface History {
-  case_: Alg;
-  guess: string;
-}
-
 interface Props extends WithStyles<typeof styles> {}
 
 function PllRecognitionTrainer({ classes }: Props) {
   const [currentCase, setCurrentCase] = React.useState<Alg | null>(null);
   const [currentGuess, setCurrentGuess] = React.useState<string | null>(null);
-  const [history, setHistory] = React.useState<History[]>([]);
+  const [colorNeutrality, setColorNeutrality] = React.useState<ColorNeutrality>(
+    ColorNeutrality.NON_CN,
+  );
+  const [history, setHistory] = React.useState<TrainerHistory[]>([]);
 
   function nextCase() {
     const n = Math.floor(Math.random() * pll.length);
-    const case_ = generateCase(pll[n]);
+    const case_ = generateCase(pll[n], colorNeutrality);
     setCurrentCase(case_);
     setCurrentGuess(null);
   }
@@ -79,6 +86,10 @@ function PllRecognitionTrainer({ classes }: Props) {
     }
   }
 
+  function handleCnChange(e: any) {
+    setColorNeutrality(e.target.value);
+  }
+
   React.useEffect(() => {
     nextCase();
   }, []);
@@ -98,6 +109,34 @@ function PllRecognitionTrainer({ classes }: Props) {
             <CubeImage alg={currentCase.alg} />
           </div>
         )}
+      </Grid>
+      <Grid container justify="center">
+        <FormControl className={''}>
+          <FormLabel>Color Neutrality</FormLabel>
+          <RadioGroup
+            aria-label="Color Neutrality"
+            name="cn"
+            value={colorNeutrality}
+            className={classes.radioGroup}
+            onChange={handleCnChange}
+          >
+            <FormControlLabel
+              value={ColorNeutrality.NON_CN}
+              control={<Radio />}
+              label="Non CN"
+            />
+            <FormControlLabel
+              value={ColorNeutrality.D_CN}
+              control={<Radio />}
+              label="Dual CN"
+            />
+            <FormControlLabel
+              value={ColorNeutrality.CN}
+              control={<Radio />}
+              label="CN"
+            />
+          </RadioGroup>
+        </FormControl>
       </Grid>
       {pllGroups.map(group => (
         <Grid
