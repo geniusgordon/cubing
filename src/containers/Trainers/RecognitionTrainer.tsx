@@ -1,5 +1,12 @@
 import React from 'react';
-import { createStyles, withStyles, WithStyles } from '@material-ui/core';
+import {
+  createStyles,
+  withStyles,
+  WithStyles,
+  withTheme,
+  WithTheme,
+} from '@material-ui/core';
+import { unstable_useMediaQuery as useMediaQuery } from '@material-ui/core/useMediaQuery';
 import Grid from '@material-ui/core/Grid';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
@@ -22,7 +29,7 @@ const styles = createStyles({
   },
 });
 
-interface Props extends WithStyles<typeof styles> {
+interface Props extends WithStyles<typeof styles>, WithTheme {
   cases: Alg[];
   checkKeyInCases(key: string): boolean;
   renderAnswerOptions(props: {
@@ -34,10 +41,14 @@ interface Props extends WithStyles<typeof styles> {
 
 function RecognitionTrainer({
   classes,
+  theme,
   cases,
   checkKeyInCases,
   renderAnswerOptions,
 }: Props) {
+  const matches = useMediaQuery(theme.breakpoints.up('sm'));
+  const imageSize = matches ? 200 : 120;
+
   const [currentCase, setCurrentCase] = React.useState<Alg | null>(null);
   const [currentGuess, setCurrentGuess] = React.useState<string | null>(null);
   const [colorNeutrality, setColorNeutrality] = React.useState<ColorNeutrality>(
@@ -95,7 +106,7 @@ function RecognitionTrainer({
       <Grid container justify="center">
         {currentCase && (
           <div className={classes.cubeImage} onClick={nextCase}>
-            <CubeImage alg={currentCase.alg} />
+            <CubeImage alg={currentCase.alg} size={imageSize} />
           </div>
         )}
       </Grid>
@@ -132,4 +143,4 @@ function RecognitionTrainer({
   );
 }
 
-export default withStyles(styles)(RecognitionTrainer);
+export default withTheme()(withStyles(styles)(RecognitionTrainer));

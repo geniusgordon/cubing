@@ -9,7 +9,7 @@ import RecognitionTrainer from './RecognitionTrainer';
 
 const styles = createStyles({
   buttonRow: {
-    marginTop: 20,
+    marginTop: 10,
   },
   correct: {
     color: 'white',
