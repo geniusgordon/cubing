@@ -31,7 +31,7 @@ interface Props extends WithStyles<typeof styles> {}
 
 function PllRecognitionTrainer({ classes }: Props) {
   function checkKeyInCases(key: string): boolean {
-    if (key.match(/[a-zA-Z]/)) {
+    if (/[a-zA-Z]/.test(key)) {
       return pllGroups.some(group => group.cases.includes(key));
     }
     return false;
