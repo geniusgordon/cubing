@@ -13,12 +13,12 @@ function Routes() {
       <AppBar />
       <Route path="/" exact component={Home} />
       <Route
-        path="/recognition-trainer/pll"
+        path="/trainers/recognition/pll"
         exact
         component={PllRecognitionTrainer}
       />
       <Route
-        path="/recognition-trainer/coll"
+        path="/trainers/recognition/coll"
         exact
         component={CollRecognitionTrainer}
       />

@@ -4,7 +4,6 @@ import { createStyles, withStyles, WithStyles } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 
 const styles = createStyles({
   title: {
@@ -18,10 +17,6 @@ const styles = createStyles({
 
 interface Props extends WithStyles<typeof styles> {}
 
-const PllRecognitionTrainerLink = (props: any) => (
-  <Link to="/recognition-trainer/pll" {...props} />
-);
-
 function Bar({ classes }: Props) {
   return (
     <AppBar position="static">
@@ -31,9 +26,6 @@ function Bar({ classes }: Props) {
             Cubing
           </Link>
         </Typography>
-        <Button color="inherit" component={PllRecognitionTrainerLink}>
-          PllRecognitionTrainer
-        </Button>
       </Toolbar>
     </AppBar>
   );

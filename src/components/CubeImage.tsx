@@ -48,6 +48,7 @@ function CubeImage({ size = 200, alg, view, stage, classes }: Props) {
         onLoad={() => {
           setLoading(false);
         }}
+        style={{ height: size, width: size }}
         className={classNames({ [classes.imageLoading]: loading })}
       />
       {loading && (
