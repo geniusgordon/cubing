@@ -8,6 +8,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Typography from '@material-ui/core/Typography';
+import { SettingContext } from '../../components/Settings';
 import { generateCrossScramble } from '../../utils';
 import { Scramble } from '../../data/types';
 
@@ -24,16 +25,16 @@ const styles = createStyles({
 interface Props extends WithStyles<typeof styles> {}
 
 function CrossTrainer({ classes }: Props) {
-  const [currentLevel, setLevel] = React.useState<number>(1);
   const [currentScramble, setScramble] = React.useState<Scramble | null>(null);
+  const { settings, updateSettings } = React.useContext(SettingContext);
 
   function nextScramble() {
-    const scramble = generateCrossScramble(currentLevel);
+    const scramble = generateCrossScramble(settings.crossLevel);
     setScramble(scramble);
   }
 
   function handleLevelChange(e: any) {
-    setLevel(e.target.value);
+    updateSettings({ crossLevel: e.target.value });
   }
 
   React.useEffect(() => {
@@ -47,7 +48,7 @@ function CrossTrainer({ classes }: Props) {
           <FormControl>
             <InputLabel htmlFor="level">Level</InputLabel>
             <Select
-              value={currentLevel}
+              value={settings.crossLevel}
               onChange={handleLevelChange}
               inputProps={{
                 name: 'level',

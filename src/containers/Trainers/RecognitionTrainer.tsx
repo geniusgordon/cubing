@@ -14,6 +14,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import CubeImage from '../../components/CubeImage';
+import { SettingContext } from '../../components/Settings';
 import { generateCase } from '../../utils';
 import { Alg, ColorNeutrality, TrainerHistory } from '../../data/types';
 
@@ -51,14 +52,12 @@ function RecognitionTrainer({
 
   const [currentCase, setCurrentCase] = React.useState<Alg | null>(null);
   const [currentGuess, setCurrentGuess] = React.useState<string | null>(null);
-  const [colorNeutrality, setColorNeutrality] = React.useState<ColorNeutrality>(
-    ColorNeutrality.NON_CN,
-  );
   const [history, setHistory] = React.useState<TrainerHistory[]>([]);
+  const { settings, updateSettings } = React.useContext(SettingContext);
 
   function nextCase() {
     const n = Math.floor(Math.random() * cases.length);
-    const case_ = generateCase(cases[n], colorNeutrality);
+    const case_ = generateCase(cases[n], settings.colorNeutrality);
     setCurrentCase(case_);
     setCurrentGuess(null);
   }
@@ -79,6 +78,7 @@ function RecognitionTrainer({
   function handleKeyup(e: KeyboardEvent) {
     if (e.key === ' ') {
       nextCase();
+      return true;
     }
 
     if (checkKeyInCases(e.key.toUpperCase())) {
@@ -87,7 +87,7 @@ function RecognitionTrainer({
   }
 
   function handleCnChange(e: any) {
-    setColorNeutrality(e.target.value);
+    updateSettings({ colorNeutrality: e.target.value });
   }
 
   React.useEffect(() => {
@@ -116,7 +116,7 @@ function RecognitionTrainer({
           <RadioGroup
             aria-label="Color Neutrality"
             name="cn"
-            value={colorNeutrality}
+            value={settings.colorNeutrality}
             className={classes.radioGroup}
             onChange={handleCnChange}
           >
