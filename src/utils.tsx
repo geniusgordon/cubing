@@ -1,4 +1,5 @@
-import { Alg, ColorNeutrality } from './data/types';
+import { Alg, ColorNeutrality, Scramble } from './data/types';
+import { crossScrambles } from './data/scrambles';
 
 function generateAuf(): string {
   const n = Math.floor(Math.random() * 4);
@@ -52,4 +53,35 @@ export function toQueryString(params: any): string {
     .filter(key => typeof params[key] !== 'undefined')
     .map(key => key + '=' + params[key])
     .join('&');
+}
+
+export function generateCrossScramble(level: number): Scramble | null {
+  if (level < 0 || level >= 8) {
+    return null;
+  }
+  const moveNames = [
+    'R',
+    'R2',
+    "R'",
+    'F',
+    'F2',
+    "F'",
+    'L',
+    'L2',
+    "L'",
+    'B',
+    'B2',
+    "B'",
+    'U',
+    'U2',
+    "U'",
+    'D',
+    'D2',
+    "D'",
+  ];
+  const randomScramble =
+    crossScrambles[level - 1][Math.floor(Math.random() * 1000)];
+  return randomScramble
+    .split('')
+    .map(s => moveNames[s.charCodeAt(0) - 'A'.charCodeAt(0)]);
 }

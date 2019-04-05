@@ -4,6 +4,7 @@ import Home from './containers/Home';
 import {
   PllRecognitionTrainer,
   CollRecognitionTrainer,
+  CrossTrainer,
 } from './containers/Trainers';
 import AppBar from './components/AppBar';
 
@@ -21,6 +22,11 @@ function Routes() {
         path="/trainers/recognition/coll"
         exact
         component={CollRecognitionTrainer}
+      />
+      <Route
+        path="/trainers/cross"
+        exact
+        component={CrossTrainer}
       />
     </Router>
   );

@@ -18,3 +18,5 @@ export enum ColorNeutrality {
   D_CN = 'D_CN',
   NON_CN = 'NON_CN',
 }
+
+export type Scramble = string[];
