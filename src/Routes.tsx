@@ -23,11 +23,7 @@ function Routes() {
         exact
         component={CollRecognitionTrainer}
       />
-      <Route
-        path="/trainers/cross"
-        exact
-        component={CrossTrainer}
-      />
+      <Route path="/trainers/cross" exact component={CrossTrainer} />
     </Router>
   );
 }
