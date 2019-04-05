@@ -16,6 +16,9 @@ const styles = createStyles({
   container: {
     marginTop: 30,
   },
+  button: {
+    marginTop: 30,
+  },
   paper: {
     padding: 30,
     margin: 30,
@@ -43,31 +46,33 @@ function CrossTrainer({ classes }: Props) {
 
   return (
     <div className={classes.container}>
-      <Grid container justify="center" spacing={16}>
-        <Grid item>
-          <FormControl>
-            <InputLabel htmlFor="level">Level</InputLabel>
-            <Select
-              value={settings.crossLevel}
-              onChange={handleLevelChange}
-              inputProps={{
-                name: 'level',
-                id: 'level',
-              }}
-            >
-              {[...Array(8)].map((_, i) => (
-                <MenuItem key={i + 1} value={i + 1}>
-                  {i + 1}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid item>
-          <Button variant="contained" onClick={nextScramble}>
-            Next Scramble
-          </Button>
-        </Grid>
+      <Grid container justify="center">
+        <FormControl>
+          <InputLabel htmlFor="level">Level</InputLabel>
+          <Select
+            value={settings.crossLevel}
+            onChange={handleLevelChange}
+            inputProps={{
+              name: 'level',
+              id: 'level',
+            }}
+          >
+            {[...Array(8)].map((_, i) => (
+              <MenuItem key={i + 1} value={i + 1}>
+                {i + 1}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Grid>
+      <Grid container justify="center">
+        <Button
+          variant="contained"
+          className={classes.button}
+          onClick={nextScramble}
+        >
+          Next Scramble
+        </Button>
       </Grid>
       <Grid container justify="center">
         <Paper className={classes.paper}>
