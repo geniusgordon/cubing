@@ -28,12 +28,26 @@ interface Props {
 function SettingProvider({ children }: Props) {
   const [settings, setSettings] = React.useState<Settings>(defaultSettings);
 
-  function updateSettings(newSettings: Partial<Settings>) {
-    setSettings({
-      ...settings,
-      ...newSettings,
-    });
+  function updateSettings(s: Partial<Settings>) {
+    const newSettings = { ...settings, ...s };
+    setSettings(newSettings);
+    window.localStorage.setItem(
+      '@cubing-tools/settings',
+      JSON.stringify(newSettings),
+    );
   }
+
+  React.useEffect(() => {
+    const settingStr = window.localStorage.getItem('@cubing-tools/settings');
+    if (!settingStr) {
+      return;
+    }
+    try {
+      const s = JSON.parse(settingStr);
+      const newSettings = { ...settings, ...s };
+      setSettings(newSettings);
+    } catch (error) {}
+  }, []);
 
   return (
     <SettingContext.Provider
