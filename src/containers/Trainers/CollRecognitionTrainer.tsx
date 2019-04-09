@@ -62,7 +62,10 @@ function CollRecognitionTrainer({ classes }: Props) {
                 });
 
                 return (
-                  <Card>
+                  <Card
+                    key={c.name}
+                    onClick={() => takeGuess(c.name[c.name.length - 1])}
+                  >
                     <CardActionArea>
                       <CubeImage alg={c.alg} size={100} view="plan" />
                       <CardContent className={className}>

@@ -40,6 +40,20 @@ function CrossTrainer({ classes }: Props) {
     updateSettings({ crossLevel: e.target.value });
   }
 
+  function handleKeyup(e: KeyboardEvent) {
+    if (e.key === ' ') {
+      nextScramble();
+      return true;
+    }
+  }
+
+  React.useEffect(() => {
+    document.addEventListener('keyup', handleKeyup);
+    return () => {
+      document.removeEventListener('keyup', handleKeyup);
+    };
+  });
+
   React.useEffect(() => {
     nextScramble();
   }, []);
