@@ -23,7 +23,7 @@ function Bar({ classes }: Props) {
       <Toolbar>
         <Typography variant="h6" color="inherit" className={classes.title}>
           <Link to="/" className={classes.link}>
-            Cubing
+            Cubing Tools
           </Link>
         </Typography>
       </Toolbar>
