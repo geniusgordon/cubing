@@ -39,6 +39,7 @@ function PllRecognitionTrainer({ classes }: Props) {
 
   return (
     <RecognitionTrainer
+      title="Pll Recognition Trainer"
       cases={pll}
       checkKeyInCases={checkKeyInCases}
       renderAnswerOptions={({ currentCase, currentGuess, takeGuess }) =>

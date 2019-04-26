@@ -15,15 +15,19 @@ const styles = createStyles({
   },
 });
 
-interface Props extends WithStyles<typeof styles> {}
+interface Props extends WithStyles<typeof styles> {
+  title?: string;
+  left?: React.ReactNode;
+}
 
-function Bar({ classes }: Props) {
+function Bar({ classes, title, left }: Props) {
   return (
     <AppBar position="static">
       <Toolbar>
+        {left}
         <Typography variant="h6" color="inherit" className={classes.title}>
           <Link to="/" className={classes.link}>
-            Cubing Tools
+            {title || 'Cubing Tools'}
           </Link>
         </Typography>
       </Toolbar>

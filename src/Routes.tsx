@@ -6,12 +6,10 @@ import {
   CollRecognitionTrainer,
   CrossTrainer,
 } from './containers/Trainers';
-import AppBar from './components/AppBar';
 
 function Routes() {
   return (
     <Router basename="/cubing-tools">
-      <AppBar />
       <Route path="/" exact component={Home} />
       <Route
         path="/trainers/recognition/pll"

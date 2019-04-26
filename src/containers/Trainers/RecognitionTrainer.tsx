@@ -1,4 +1,5 @@
 import React from 'react';
+import { withRouter, RouteComponentProps } from 'react-router';
 import {
   createStyles,
   withStyles,
@@ -7,12 +8,15 @@ import {
   WithTheme,
 } from '@material-ui/core';
 import { unstable_useMediaQuery as useMediaQuery } from '@material-ui/core/useMediaQuery';
+import IconButton from '@material-ui/core/IconButton';
+import BackIcon from '@material-ui/icons/ArrowBack';
 import Grid from '@material-ui/core/Grid';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
+import AppBar from '../../components/AppBar';
 import CubeImage from '../../components/CubeImage';
 import { SettingContext } from '../../components/Settings';
 import { generateCase } from '../../utils';
@@ -30,7 +34,11 @@ const styles = createStyles({
   },
 });
 
-interface Props extends WithStyles<typeof styles>, WithTheme {
+interface Props
+  extends WithStyles<typeof styles>,
+    WithTheme,
+    RouteComponentProps {
+  title: string;
   cases: Alg[];
   checkKeyInCases(key: string): boolean;
   renderAnswerOptions(props: {
@@ -43,6 +51,8 @@ interface Props extends WithStyles<typeof styles>, WithTheme {
 function RecognitionTrainer({
   classes,
   theme,
+  history,
+  title,
   cases,
   checkKeyInCases,
   renderAnswerOptions,
@@ -52,7 +62,7 @@ function RecognitionTrainer({
 
   const [currentCase, setCurrentCase] = React.useState<Alg | null>(null);
   const [currentGuess, setCurrentGuess] = React.useState<string | null>(null);
-  const [history, setHistory] = React.useState<TrainerHistory[]>([]);
+  const [trainerHistory, setHistory] = React.useState<TrainerHistory[]>([]);
   const { settings, updateSettings } = React.useContext(SettingContext);
 
   const nextCase = React.useCallback(() => {
@@ -70,7 +80,7 @@ function RecognitionTrainer({
           case_: currentCase,
           guess,
         },
-        ...history,
+        ...trainerHistory,
       ]);
     }
   }
@@ -101,46 +111,60 @@ function RecognitionTrainer({
     };
   });
 
+  function goBack() {
+    history.goBack();
+  }
+
   return (
-    <div className={classes.container}>
-      <Grid container justify="center">
-        {currentCase && (
-          <div className={classes.cubeImage} onClick={nextCase}>
-            <CubeImage alg={currentCase.alg} size={imageSize} />
-          </div>
-        )}
-      </Grid>
-      <Grid container justify="center">
-        <FormControl>
-          <FormLabel>Color Neutrality</FormLabel>
-          <RadioGroup
-            aria-label="Color Neutrality"
-            name="cn"
-            value={settings.colorNeutrality}
-            className={classes.radioGroup}
-            onChange={handleCnChange}
-          >
-            <FormControlLabel
-              value={ColorNeutrality.NON_CN}
-              control={<Radio />}
-              label="Non CN"
-            />
-            <FormControlLabel
-              value={ColorNeutrality.D_CN}
-              control={<Radio />}
-              label="Dual CN"
-            />
-            <FormControlLabel
-              value={ColorNeutrality.CN}
-              control={<Radio />}
-              label="CN"
-            />
-          </RadioGroup>
-        </FormControl>
-      </Grid>
-      {renderAnswerOptions({ currentCase, currentGuess, takeGuess })}
-    </div>
+    <>
+      <AppBar
+        title={title}
+        left={
+          <IconButton color="inherit" aria-label="Back" onClick={goBack}>
+            <BackIcon />
+          </IconButton>
+        }
+      />
+      <div className={classes.container}>
+        <Grid container justify="center">
+          {currentCase && (
+            <div className={classes.cubeImage} onClick={nextCase}>
+              <CubeImage alg={currentCase.alg} size={imageSize} />
+            </div>
+          )}
+        </Grid>
+        <Grid container justify="center">
+          <FormControl>
+            <FormLabel>Color Neutrality</FormLabel>
+            <RadioGroup
+              aria-label="Color Neutrality"
+              name="cn"
+              value={settings.colorNeutrality}
+              className={classes.radioGroup}
+              onChange={handleCnChange}
+            >
+              <FormControlLabel
+                value={ColorNeutrality.NON_CN}
+                control={<Radio />}
+                label="Non CN"
+              />
+              <FormControlLabel
+                value={ColorNeutrality.D_CN}
+                control={<Radio />}
+                label="Dual CN"
+              />
+              <FormControlLabel
+                value={ColorNeutrality.CN}
+                control={<Radio />}
+                label="CN"
+              />
+            </RadioGroup>
+          </FormControl>
+        </Grid>
+        {renderAnswerOptions({ currentCase, currentGuess, takeGuess })}
+      </div>
+    </>
   );
 }
 
-export default withTheme()(withStyles(styles)(RecognitionTrainer));
+export default withRouter(withTheme()(withStyles(styles)(RecognitionTrainer)));

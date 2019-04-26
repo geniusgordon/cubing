@@ -40,6 +40,7 @@ function CollRecognitionTrainer({ classes }: Props) {
 
   return (
     <RecognitionTrainer
+      title="Coll Recognition Trainer"
       cases={coll}
       checkKeyInCases={checkKeyInCases}
       renderAnswerOptions={({ currentCase, currentGuess, takeGuess }) =>
