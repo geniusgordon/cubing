@@ -55,12 +55,12 @@ function RecognitionTrainer({
   const [history, setHistory] = React.useState<TrainerHistory[]>([]);
   const { settings, updateSettings } = React.useContext(SettingContext);
 
-  function nextCase() {
+  const nextCase = React.useCallback(() => {
     const n = Math.floor(Math.random() * cases.length);
     const case_ = generateCase(cases[n], settings.colorNeutrality);
     setCurrentCase(case_);
     setCurrentGuess(null);
-  }
+  }, [cases, settings]);
 
   function takeGuess(guess: string) {
     if (currentCase) {
@@ -92,7 +92,7 @@ function RecognitionTrainer({
 
   React.useEffect(() => {
     nextCase();
-  }, []);
+  }, [nextCase]);
 
   React.useEffect(() => {
     document.addEventListener('keyup', handleKeyup);

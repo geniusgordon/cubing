@@ -31,10 +31,10 @@ function CrossTrainer({ classes }: Props) {
   const [currentScramble, setScramble] = React.useState<Scramble | null>(null);
   const { settings, updateSettings } = React.useContext(SettingContext);
 
-  function nextScramble() {
+  const nextScramble = React.useCallback(() => {
     const scramble = generateCrossScramble(settings.crossLevel);
     setScramble(scramble);
-  }
+  }, [settings]);
 
   function handleLevelChange(e: any) {
     updateSettings({ crossLevel: e.target.value });
@@ -56,7 +56,7 @@ function CrossTrainer({ classes }: Props) {
 
   React.useEffect(() => {
     nextScramble();
-  }, []);
+  }, [nextScramble]);
 
   return (
     <div className={classes.container}>

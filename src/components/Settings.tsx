@@ -44,8 +44,7 @@ function SettingProvider({ children }: Props) {
     }
     try {
       const s = JSON.parse(settingStr);
-      const newSettings = { ...settings, ...s };
-      setSettings(newSettings);
+      setSettings(s);
     } catch (error) {}
   }, []);
 
