@@ -51,7 +51,9 @@ function PllRecognitionTrainer({ classes }: Props) {
             className={classes.buttonRow}
           >
             {group.cases.map(c => {
-              const currentCaseName = currentCase ? currentCase.name[0] : '';
+              const currentCaseName = currentCase
+                ? currentCase.alg.name[0]
+                : '';
               const isCorrect =
                 currentGuess === c && currentCaseName === currentGuess;
               const isWrong =

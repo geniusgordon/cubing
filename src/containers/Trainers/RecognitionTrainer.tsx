@@ -19,8 +19,13 @@ import FormLabel from '@material-ui/core/FormLabel';
 import AppBar from '../../components/AppBar';
 import CubeImage from '../../components/CubeImage';
 import { SettingContext } from '../../components/Settings';
-import { generateCase } from '../../utils';
-import { Alg, ColorNeutrality, TrainerHistory } from '../../data/types';
+import { generateCase, caseToString } from '../../utils';
+import {
+  Alg,
+  ColorNeutrality,
+  TrainerHistory,
+  TestCase,
+} from '../../data/types';
 
 const styles = createStyles({
   container: {
@@ -42,7 +47,7 @@ interface Props
   cases: Alg[];
   checkKeyInCases(key: string): boolean;
   renderAnswerOptions(props: {
-    currentCase: Alg | null;
+    currentCase: TestCase | null;
     currentGuess: string | null;
     takeGuess(guess: string): void;
   }): React.ReactNode;
@@ -60,7 +65,7 @@ function RecognitionTrainer({
   const matches = useMediaQuery(theme.breakpoints.up('sm'));
   const imageSize = matches ? 200 : 120;
 
-  const [currentCase, setCurrentCase] = React.useState<Alg | null>(null);
+  const [currentCase, setCurrentCase] = React.useState<TestCase | null>(null);
   const [currentGuess, setCurrentGuess] = React.useState<string | null>(null);
   const [trainerHistory, setHistory] = React.useState<TrainerHistory[]>([]);
   const { settings, updateSettings } = React.useContext(SettingContext);
@@ -75,13 +80,7 @@ function RecognitionTrainer({
   function takeGuess(guess: string) {
     if (currentCase) {
       setCurrentGuess(guess);
-      setHistory([
-        {
-          case_: currentCase,
-          guess,
-        },
-        ...trainerHistory,
-      ]);
+      setHistory([...trainerHistory]);
     }
   }
 
@@ -129,7 +128,7 @@ function RecognitionTrainer({
         <Grid container justify="center">
           {currentCase && (
             <div className={classes.cubeImage} onClick={nextCase}>
-              <CubeImage alg={currentCase.alg} size={imageSize} />
+              <CubeImage alg={caseToString(currentCase)} size={imageSize} />
             </div>
           )}
         </Grid>

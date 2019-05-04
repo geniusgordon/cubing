@@ -47,10 +47,10 @@ function CollRecognitionTrainer({ classes }: Props) {
         currentCase ? (
           <Grid container justify="center">
             {coll
-              .filter(c => c.name[0] === currentCase.name[0])
+              .filter(c => c.name[0] === currentCase.alg.name[0])
               .map((c, i) => {
                 const currentCaseName =
-                  currentCase.name[currentCase.name.length - 1];
+                  currentCase.alg.name[currentCase.alg.name.length - 1];
                 const isCorrect =
                   currentGuess === (i + 1).toString() &&
                   currentGuess === currentCaseName;

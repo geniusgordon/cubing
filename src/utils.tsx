@@ -1,4 +1,4 @@
-import { Alg, ColorNeutrality, Scramble } from './data/types';
+import { Alg, ColorNeutrality, Scramble, TestCase } from './data/types';
 import { crossScrambles } from './data/scrambles';
 
 function generateAuf(): string {
@@ -37,15 +37,22 @@ function generateRotation(cn: ColorNeutrality): string {
   }
 }
 
-export function generateCase(alg: Alg, cn: ColorNeutrality): Alg {
+export function generateCase(alg: Alg, cn: ColorNeutrality): TestCase {
   const preAuf = generateAuf();
   const postAuf = generateAuf();
   const cnRotation = generateRotation(cn);
   const yRotation = generateYRotation();
   return {
-    ...alg,
-    alg: preAuf + alg.alg + postAuf + cnRotation + yRotation,
+    alg,
+    preAuf,
+    postAuf,
+    cnRotation,
+    yRotation,
   };
+}
+
+export function caseToString(c: TestCase): string {
+  return c.preAuf + c.alg.alg + c.postAuf + c.cnRotation + c.yRotation;
 }
 
 export function toQueryString(params: any): string {

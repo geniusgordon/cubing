@@ -8,9 +8,18 @@ export interface AlgGroup {
   cases: string[];
 }
 
+export interface TestCase {
+  alg: Alg;
+  preAuf: String;
+  postAuf: String;
+  cnRotation: String;
+  yRotation: String;
+}
+
 export interface TrainerHistory {
-  case_: Alg;
+  case_: TestCase;
   guess: string;
+  correct: Boolean;
 }
 
 export enum ColorNeutrality {
