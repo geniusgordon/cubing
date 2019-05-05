@@ -20,7 +20,7 @@ import AppBar from '../../components/AppBar';
 import CubeImage from '../../components/CubeImage';
 import { useSettings } from '../../hooks/useLocalStorage';
 import { generateCase, caseToString, randomChoice } from '../../utils';
-import { Alg, ColorNeutrality, FlashCard, TestCase } from '../../data/types';
+import { Alg, ColorNeutrality, TestCase } from '../../data/types';
 
 const styles = createStyles({
   container: {
@@ -39,8 +39,9 @@ interface Props
     WithTheme,
     RouteComponentProps {
   title: string;
-  flashCards: FlashCard<Alg>[];
+  cases: Alg[];
   checkKeyInCases(key: string): boolean;
+  checkIsCorrect(case_: TestCase | null, guess: string | null): boolean;
   renderAnswerOptions(props: {
     currentCase: TestCase | null;
     currentGuess: string | null;
@@ -53,29 +54,48 @@ function RecognitionTrainer({
   theme,
   history,
   title,
-  flashCards,
+  cases,
   checkKeyInCases,
+  checkIsCorrect,
   renderAnswerOptions,
 }: Props) {
   const matches = useMediaQuery(theme.breakpoints.up('sm'));
   const imageSize = matches ? 200 : 120;
 
-  // const [flashCards,  setFlashCards] = React.useState<>()
   const [currentCase, setCurrentCase] = React.useState<TestCase | null>(null);
   const [currentGuess, setCurrentGuess] = React.useState<string | null>(null);
   const [settings, updateSettings] = useSettings();
 
   const nextCase = React.useCallback(() => {
-    const c = randomChoice(flashCards, flashCards.map(f => f.deficiency));
-    const case_ = generateCase(c.case, settings.colorNeutrality);
+    const c = randomChoice(cases, cases.map(() => 1));
+    const case_ = generateCase(c, settings.colorNeutrality);
     setCurrentCase(case_);
     setCurrentGuess(null);
-  }, [flashCards, settings]);
+  }, [cases, settings]);
 
   function takeGuess(guess: string) {
     if (currentCase) {
       setCurrentGuess(guess);
-      // setHistory([...trainerHistory]);
+
+      // const flashCardIndex = flashCards.findIndex(
+      //   f => f.data === currentCase.alg,
+      // );
+      // if (flashCardIndex === -1) {
+      //   return;
+      // }
+      // const flashCard = flashCards[flashCardIndex];
+      // const isCorrect = checkIsCorrect(currentCase, guess);
+      // if (isCorrect) {
+      //   return;
+      // }
+      // setFlashCards([
+      //   ...flashCards.slice(0, flashCardIndex),
+      //   {
+      //     ...flashCard,
+      //     deficiency: flashCard.deficiency + 1,
+      //   },
+      //   ...flashCards.slice(flashCardIndex + 1),
+      // ]);
     }
   }
 

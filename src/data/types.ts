@@ -17,7 +17,7 @@ export interface TestCase {
 }
 
 export interface FlashCard<T> {
-  case: T;
+  data: T;
   deficiency: number;
 }
 

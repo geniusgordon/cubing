@@ -7,9 +7,8 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import { red, green } from '@material-ui/core/colors';
-import useLocalStorage from '../../hooks/useLocalStorage';
 import { coll } from '../../data/algs';
-import { FlashCard, Alg } from '../../data/types';
+import { TestCase } from '../../data/types';
 import RecognitionTrainer from './RecognitionTrainer';
 import CubeImage from '../../components/CubeImage';
 
@@ -36,37 +35,39 @@ const styles = createStyles({
 interface Props extends WithStyles<typeof styles> {}
 
 function CollRecognitionTrainer({ classes }: Props) {
-  const [collFlashCards, setCollFashCards] = useLocalStorage<FlashCard<Alg>[]>(
-    'coll-recognition',
-    coll.map(c => ({ case: c, deficiency: 1 })),
-  );
-
   function checkKeyInCases(key: string): boolean {
     return /[1-6]/.test(key);
+  }
+
+  function checkIsCorrect(
+    case_: TestCase | null,
+    guess: string | null,
+  ): boolean {
+    if (!case_) {
+      return false;
+    }
+    const caseName = case_.alg.name[case_.alg.name.length - 1];
+    return guess === caseName;
   }
 
   return (
     <RecognitionTrainer
       title="Coll Recognition Trainer"
-      flashCards={collFlashCards}
+      cases={coll}
       checkKeyInCases={checkKeyInCases}
+      checkIsCorrect={checkIsCorrect}
       renderAnswerOptions={({ currentCase, currentGuess, takeGuess }) =>
         currentCase ? (
           <Grid container justify="center">
             {coll
               .filter(c => c.name[0] === currentCase.alg.name[0])
               .map((c, i) => {
-                const currentCaseName =
-                  currentCase.alg.name[currentCase.alg.name.length - 1];
-                const isCorrect =
-                  currentGuess === (i + 1).toString() &&
-                  currentGuess === currentCaseName;
-                const isWrong =
-                  currentGuess === (i + 1).toString() &&
-                  currentGuess !== currentCaseName;
+                const isCurrent = currentGuess === (i + 1).toString();
+                const isCorrect = checkIsCorrect(currentCase, currentGuess);
+
                 const className = classNames({
-                  [classes.correct]: isCorrect,
-                  [classes.wrong]: isWrong,
+                  [classes.correct]: isCurrent && isCorrect,
+                  [classes.wrong]: isCurrent && !isCorrect,
                 });
 
                 return (

@@ -4,9 +4,8 @@ import { createStyles, withStyles, WithStyles } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import { red, green } from '@material-ui/core/colors';
-import useLocalStorage from '../../hooks/useLocalStorage';
 import { pll, pllGroups } from '../../data/algs';
-import { FlashCard, Alg } from '../../data/types';
+import { TestCase } from '../../data/types';
 import RecognitionTrainer from './RecognitionTrainer';
 
 const styles = createStyles({
@@ -32,11 +31,6 @@ const styles = createStyles({
 interface Props extends WithStyles<typeof styles> {}
 
 function PllRecognitionTrainer({ classes }: Props) {
-  const [pllFlashCards, setPllFashCards] = useLocalStorage<FlashCard<Alg>[]>(
-    'pll-recognition',
-    pll.map(p => ({ case: p, deficiency: 1 })),
-  );
-
   function checkKeyInCases(key: string): boolean {
     if (/[a-zA-Z]/.test(key)) {
       return pllGroups.some(group => group.cases.includes(key));
@@ -44,11 +38,20 @@ function PllRecognitionTrainer({ classes }: Props) {
     return false;
   }
 
+  function checkIsCorrect(
+    case_: TestCase | null,
+    guess: string | null,
+  ): boolean {
+    const caseName = case_ ? case_.alg.name[0] : '';
+    return caseName === guess;
+  }
+
   return (
     <RecognitionTrainer
       title="Pll Recognition Trainer"
-      flashCards={pllFlashCards}
+      cases={pll}
       checkKeyInCases={checkKeyInCases}
+      checkIsCorrect={checkIsCorrect}
       renderAnswerOptions={({ currentCase, currentGuess, takeGuess }) =>
         pllGroups.map(group => (
           <Grid
@@ -58,21 +61,16 @@ function PllRecognitionTrainer({ classes }: Props) {
             className={classes.buttonRow}
           >
             {group.cases.map(c => {
-              const currentCaseName = currentCase
-                ? currentCase.alg.name[0]
-                : '';
-              const isCorrect =
-                currentGuess === c && currentCaseName === currentGuess;
-              const isWrong =
-                currentGuess === c && currentCaseName !== currentGuess;
+              const isCurrent = currentGuess === c;
+              const isCorrect = checkIsCorrect(currentCase, currentGuess);
 
               return (
                 <Button
                   key={c}
                   variant="contained"
                   className={classNames({
-                    [classes.correct]: isCorrect,
-                    [classes.wrong]: isWrong,
+                    [classes.correct]: isCurrent && isCorrect,
+                    [classes.wrong]: isCurrent && !isCorrect,
                   })}
                   onClick={() => takeGuess(c)}
                 >
