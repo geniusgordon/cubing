@@ -15,7 +15,7 @@ const defaultSettings: Settings = {
 
 function useLocalStorage<T>(
   key: string,
-  initialValue: T,
+  value: T | (() => T),
 ): [T, (v: React.SetStateAction<T>) => void] {
   const [storedValue, setStoredValue] = React.useState<T>(() => {
     try {
@@ -26,6 +26,7 @@ function useLocalStorage<T>(
     } catch (error) {
       console.log(error);
     }
+    const initialValue = value instanceof Function ? value() : value;
     window.localStorage.setItem(
       LOCAL_STORAGE_PREFIX + key,
       JSON.stringify(initialValue),

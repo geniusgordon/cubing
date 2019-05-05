@@ -36,11 +36,17 @@ function generateCnRotation(cn: ColorNeutrality): number {
   }
 }
 
-export function generateCase(alg: Alg, cn: ColorNeutrality): TestCase {
-  const preAuf = generateAuf();
+interface GenerateCaseOptions {
+  cn: ColorNeutrality;
+  preAuf?: number;
+}
+
+export function generateCase(alg: Alg, options: GenerateCaseOptions): TestCase {
+  const preAuf =
+    typeof options.preAuf === 'undefined' ? generateAuf() : options.preAuf;
   const postAuf = generateAuf();
   const yRotation = generateYRotation();
-  const cnRotation = generateCnRotation(cn);
+  const cnRotation = generateCnRotation(options.cn);
   return {
     alg,
     preAuf,

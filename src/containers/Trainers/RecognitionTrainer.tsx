@@ -20,7 +20,7 @@ import AppBar from '../../components/AppBar';
 import CubeImage from '../../components/CubeImage';
 import { useSettings } from '../../hooks/useLocalStorage';
 import { generateCase, caseToString, randomChoice } from '../../utils';
-import { Alg, ColorNeutrality, TestCase } from '../../data/types';
+import { Alg, ColorNeutrality, FlashCard, TestCase } from '../../data/types';
 
 const styles = createStyles({
   container: {
@@ -39,14 +39,20 @@ interface Props
     WithTheme,
     RouteComponentProps {
   title: string;
-  cases: Alg[];
+  flashCards: FlashCard<Alg>[];
+  setFlashCards(v: React.SetStateAction<FlashCard<Alg>[]>): void;
   checkKeyInCases(key: string): boolean;
-  checkIsCorrect(case_: TestCase | null, guess: string | null): boolean;
+  checkIsCorrect(case_: TestCase, guess: string | null): boolean;
   renderAnswerOptions(props: {
-    currentCase: TestCase | null;
+    currentCase: TestCase;
     currentGuess: string | null;
     takeGuess(guess: string): void;
   }): React.ReactNode;
+}
+
+function generateNextCase(cards: FlashCard<Alg>[], cn: ColorNeutrality) {
+  const c = randomChoice(cards, cards.map(f => f.deficiency));
+  return generateCase(c.data, { cn });
 }
 
 function RecognitionTrainer({
@@ -54,7 +60,8 @@ function RecognitionTrainer({
   theme,
   history,
   title,
-  cases,
+  flashCards,
+  setFlashCards,
   checkKeyInCases,
   checkIsCorrect,
   renderAnswerOptions,
@@ -62,46 +69,48 @@ function RecognitionTrainer({
   const matches = useMediaQuery(theme.breakpoints.up('sm'));
   const imageSize = matches ? 200 : 120;
 
-  const [currentCase, setCurrentCase] = React.useState<TestCase | null>(null);
-  const [currentGuess, setCurrentGuess] = React.useState<string | null>(null);
   const [settings, updateSettings] = useSettings();
 
-  const nextCase = React.useCallback(() => {
-    const c = randomChoice(cases, cases.map(() => 1));
-    const case_ = generateCase(c, settings.colorNeutrality);
+  const [currentCase, setCurrentCase] = React.useState<TestCase>(() =>
+    generateNextCase(flashCards, settings.colorNeutrality),
+  );
+  const [currentGuess, setCurrentGuess] = React.useState<string | null>(null);
+
+  function nextCase(cn: ColorNeutrality) {
+    const case_ = generateNextCase(flashCards, cn);
     setCurrentCase(case_);
     setCurrentGuess(null);
-  }, [cases, settings]);
+  }
 
   function takeGuess(guess: string) {
     if (currentCase) {
       setCurrentGuess(guess);
 
-      // const flashCardIndex = flashCards.findIndex(
-      //   f => f.data === currentCase.alg,
-      // );
-      // if (flashCardIndex === -1) {
-      //   return;
-      // }
-      // const flashCard = flashCards[flashCardIndex];
-      // const isCorrect = checkIsCorrect(currentCase, guess);
-      // if (isCorrect) {
-      //   return;
-      // }
-      // setFlashCards([
-      //   ...flashCards.slice(0, flashCardIndex),
-      //   {
-      //     ...flashCard,
-      //     deficiency: flashCard.deficiency + 1,
-      //   },
-      //   ...flashCards.slice(flashCardIndex + 1),
-      // ]);
+      const flashCardIndex = flashCards.findIndex(
+        f => f.data === currentCase.alg,
+      );
+      if (flashCardIndex === -1) {
+        return;
+      }
+      const flashCard = flashCards[flashCardIndex];
+      const isCorrect = checkIsCorrect(currentCase, guess);
+      if (isCorrect) {
+        return;
+      }
+      setFlashCards([
+        ...flashCards.slice(0, flashCardIndex),
+        {
+          ...flashCard,
+          deficiency: flashCard.deficiency + 1,
+        },
+        ...flashCards.slice(flashCardIndex + 1),
+      ]);
     }
   }
 
   function handleKeyup(e: KeyboardEvent) {
     if (e.key === ' ') {
-      nextCase();
+      nextCase(settings.colorNeutrality);
       return true;
     }
 
@@ -112,11 +121,12 @@ function RecognitionTrainer({
 
   function handleCnChange(e: any) {
     updateSettings({ colorNeutrality: e.target.value });
+    nextCase(settings.colorNeutrality);
   }
 
-  React.useEffect(() => {
-    nextCase();
-  }, [nextCase]);
+  function handleImageClick() {
+    nextCase(settings.colorNeutrality);
+  }
 
   React.useEffect(() => {
     document.addEventListener('keyup', handleKeyup);
@@ -142,7 +152,7 @@ function RecognitionTrainer({
       <div className={classes.container}>
         <Grid container justify="center">
           {currentCase && (
-            <div className={classes.cubeImage} onClick={nextCase}>
+            <div className={classes.cubeImage} onClick={handleImageClick}>
               <CubeImage alg={caseToString(currentCase)} size={imageSize} />
             </div>
           )}
