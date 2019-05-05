@@ -20,10 +20,17 @@ function useLocalStorage<T>(
   const [storedValue, setStoredValue] = React.useState<T>(() => {
     try {
       const item = window.localStorage.getItem(LOCAL_STORAGE_PREFIX + key);
-      return item ? JSON.parse(item) : initialValue;
+      if (item) {
+        return JSON.parse(item);
+      }
     } catch (error) {
-      return initialValue;
+      console.log(error);
     }
+    window.localStorage.setItem(
+      LOCAL_STORAGE_PREFIX + key,
+      JSON.stringify(initialValue),
+    );
+    return initialValue;
   });
 
   function setValue(value: React.SetStateAction<T>) {

@@ -7,7 +7,9 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import { red, green } from '@material-ui/core/colors';
+import useLocalStorage from '../../hooks/useLocalStorage';
 import { coll } from '../../data/algs';
+import { FlashCard, Alg } from '../../data/types';
 import RecognitionTrainer from './RecognitionTrainer';
 import CubeImage from '../../components/CubeImage';
 
@@ -34,6 +36,11 @@ const styles = createStyles({
 interface Props extends WithStyles<typeof styles> {}
 
 function CollRecognitionTrainer({ classes }: Props) {
+  const [collFlashCards, setCollFashCards] = useLocalStorage<FlashCard<Alg>[]>(
+    'coll-recognition',
+    coll.map(c => ({ case: c, deficiency: 1 })),
+  );
+
   function checkKeyInCases(key: string): boolean {
     return /[1-6]/.test(key);
   }
@@ -41,7 +48,7 @@ function CollRecognitionTrainer({ classes }: Props) {
   return (
     <RecognitionTrainer
       title="Coll Recognition Trainer"
-      cases={coll}
+      flashCards={collFlashCards}
       checkKeyInCases={checkKeyInCases}
       renderAnswerOptions={({ currentCase, currentGuess, takeGuess }) =>
         currentCase ? (

@@ -39,7 +39,7 @@ interface Props
     WithTheme,
     RouteComponentProps {
   title: string;
-  cases: Alg[];
+  flashCards: FlashCard<Alg>[];
   checkKeyInCases(key: string): boolean;
   renderAnswerOptions(props: {
     currentCase: TestCase | null;
@@ -53,7 +53,7 @@ function RecognitionTrainer({
   theme,
   history,
   title,
-  cases,
+  flashCards,
   checkKeyInCases,
   renderAnswerOptions,
 }: Props) {
@@ -66,11 +66,11 @@ function RecognitionTrainer({
   const [settings, updateSettings] = useSettings();
 
   const nextCase = React.useCallback(() => {
-    const c = randomChoice(cases, [...new Array(cases.length)].map(_ => 1));
-    const case_ = generateCase(c, settings.colorNeutrality);
+    const c = randomChoice(flashCards, flashCards.map(f => f.deficiency));
+    const case_ = generateCase(c.case, settings.colorNeutrality);
     setCurrentCase(case_);
     setCurrentGuess(null);
-  }, [cases, settings]);
+  }, [flashCards, settings]);
 
   function takeGuess(guess: string) {
     if (currentCase) {
