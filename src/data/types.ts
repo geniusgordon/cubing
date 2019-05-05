@@ -3,6 +3,10 @@ export interface Alg {
   alg: string;
 }
 
+export interface AlgWithAuf extends Alg {
+  preAuf: number;
+}
+
 export interface AlgGroup {
   name: string;
   cases: string[];

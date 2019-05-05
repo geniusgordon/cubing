@@ -6,7 +6,7 @@ import Button from '@material-ui/core/Button';
 import { red, green } from '@material-ui/core/colors';
 import useLocalStorage from '../../hooks/useLocalStorage';
 import { pll, pllGroups } from '../../data/algs';
-import { Alg, FlashCard, TestCase } from '../../data/types';
+import { AlgWithAuf, FlashCard, TestCase } from '../../data/types';
 import RecognitionTrainer from './RecognitionTrainer';
 
 const styles = createStyles({
@@ -32,9 +32,17 @@ const styles = createStyles({
 interface Props extends WithStyles<typeof styles> {}
 
 function PllRecognitionTrainer({ classes }: Props) {
-  const [flashCards, setFlashCards] = useLocalStorage<FlashCard<Alg>[]>(
+  const [flashCards, setFlashCards] = useLocalStorage<FlashCard<AlgWithAuf>[]>(
     'pll-recognition',
-    () => pll.map(p => ({ data: p, deficiency: 1 })),
+    () =>
+      pll
+        .map(p =>
+          [...new Array(4)].map((_, i) => ({
+            data: { ...p, preAuf: 0 },
+            deficiency: 1,
+          })),
+        )
+        .flat(),
   );
 
   function checkKeyInCases(key: string): boolean {

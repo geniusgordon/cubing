@@ -9,7 +9,7 @@ import Typography from '@material-ui/core/Typography';
 import { red, green } from '@material-ui/core/colors';
 import useLocalStorage from '../../hooks/useLocalStorage';
 import { coll } from '../../data/algs';
-import { Alg, FlashCard, TestCase } from '../../data/types';
+import { AlgWithAuf, FlashCard, TestCase } from '../../data/types';
 import RecognitionTrainer from './RecognitionTrainer';
 import CubeImage from '../../components/CubeImage';
 
@@ -36,9 +36,17 @@ const styles = createStyles({
 interface Props extends WithStyles<typeof styles> {}
 
 function CollRecognitionTrainer({ classes }: Props) {
-  const [flashCards, setFlashCards] = useLocalStorage<FlashCard<Alg>[]>(
+  const [flashCards, setFlashCards] = useLocalStorage<FlashCard<AlgWithAuf>[]>(
     'coll-recognition',
-    () => coll.map(c => ({ data: c, deficiency: 1 })),
+    () =>
+      coll
+        .map(c =>
+          [...new Array(4)].map((_, i) => ({
+            data: { ...c, preAuf: 0 },
+            deficiency: 1,
+          })),
+        )
+        .flat(),
   );
 
   function checkKeyInCases(key: string): boolean {

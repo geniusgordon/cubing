@@ -20,7 +20,12 @@ import AppBar from '../../components/AppBar';
 import CubeImage from '../../components/CubeImage';
 import { useSettings } from '../../hooks/useLocalStorage';
 import { generateCase, caseToString, randomChoice } from '../../utils';
-import { Alg, ColorNeutrality, FlashCard, TestCase } from '../../data/types';
+import {
+  AlgWithAuf,
+  ColorNeutrality,
+  FlashCard,
+  TestCase,
+} from '../../data/types';
 
 const styles = createStyles({
   container: {
@@ -39,8 +44,8 @@ interface Props
     WithTheme,
     RouteComponentProps {
   title: string;
-  flashCards: FlashCard<Alg>[];
-  setFlashCards(v: React.SetStateAction<FlashCard<Alg>[]>): void;
+  flashCards: FlashCard<AlgWithAuf>[];
+  setFlashCards(v: React.SetStateAction<FlashCard<AlgWithAuf>[]>): void;
   checkKeyInCases(key: string): boolean;
   checkIsCorrect(case_: TestCase, guess: string | null): boolean;
   renderAnswerOptions(props: {
@@ -50,9 +55,9 @@ interface Props
   }): React.ReactNode;
 }
 
-function generateNextCase(cards: FlashCard<Alg>[], cn: ColorNeutrality) {
+function generateNextCase(cards: FlashCard<AlgWithAuf>[], cn: ColorNeutrality) {
   const c = randomChoice(cards, cards.map(f => f.deficiency));
-  return generateCase(c.data, { cn });
+  return generateCase(c.data, { cn, preAuf: c.data.preAuf });
 }
 
 function RecognitionTrainer({
