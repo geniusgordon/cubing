@@ -12,7 +12,7 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Typography from '@material-ui/core/Typography';
 import AppBar from '../../components/AppBar';
-import { SettingContext } from '../../components/Settings';
+import { useSettings } from '../../hooks/useLocalStorage';
 import { generateCrossScramble } from '../../utils';
 import { Scramble } from '../../data/types';
 
@@ -33,7 +33,7 @@ interface Props extends WithStyles<typeof styles>, RouteComponentProps {}
 
 function CrossTrainer({ classes, history }: Props) {
   const [currentScramble, setScramble] = React.useState<Scramble | null>(null);
-  const { settings, updateSettings } = React.useContext(SettingContext);
+  const [settings, updateSettings] = useSettings();
 
   const nextScramble = React.useCallback(() => {
     const scramble = generateCrossScramble(settings.crossLevel);

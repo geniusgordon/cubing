@@ -1,58 +1,63 @@
 import { Alg, ColorNeutrality, Scramble, TestCase } from './data/types';
 import { crossScrambles } from './data/scrambles';
 
-function generateAuf(): string {
-  const n = Math.floor(Math.random() * 4);
+function numToAuf(n: number): string {
   const auf = ['', 'U', 'U2', "U'"];
   return auf[n];
 }
 
-function generateYRotation(): string {
-  const n = Math.floor(Math.random() * 4);
+function numToYRotation(n: number): string {
   const r = ['', 'y', 'y2', "y'"];
   return r[n];
 }
 
-function generateCnRotation(): string {
-  const n = Math.floor(Math.random() * 6);
+function numToCnRotation(n: number): string {
   const rotations = ['', 'x', 'x2', "x'", 'z', "z'"];
   return rotations[n];
 }
 
-function generateDualCnRotation(): string {
-  const n = Math.floor(Math.random() * 2);
-  const rotations = ['', 'x2'];
-  return rotations[n];
+function generateAuf(): number {
+  return Math.floor(Math.random() * 4);
 }
 
-function generateRotation(cn: ColorNeutrality): string {
+function generateYRotation(): number {
+  return Math.floor(Math.random() * 4);
+}
+
+function generateCnRotation(cn: ColorNeutrality): number {
   switch (cn) {
     case ColorNeutrality.CN:
-      return generateCnRotation();
+      return Math.floor(Math.random() * 6);
     case ColorNeutrality.D_CN:
-      return generateDualCnRotation();
+      return Math.floor(Math.random() * 2) * 2;
     case ColorNeutrality.NON_CN:
     default:
-      return '';
+      return 0;
   }
 }
 
 export function generateCase(alg: Alg, cn: ColorNeutrality): TestCase {
   const preAuf = generateAuf();
   const postAuf = generateAuf();
-  const cnRotation = generateRotation(cn);
   const yRotation = generateYRotation();
+  const cnRotation = generateCnRotation(cn);
   return {
     alg,
     preAuf,
     postAuf,
-    cnRotation,
     yRotation,
+    cnRotation,
   };
 }
 
 export function caseToString(c: TestCase): string {
-  return c.preAuf + c.alg.alg + c.postAuf + c.cnRotation + c.yRotation;
+  return (
+    numToAuf(c.preAuf) +
+    c.alg.alg +
+    numToAuf(c.postAuf) +
+    numToYRotation(c.yRotation) +
+    numToCnRotation(c.cnRotation)
+  );
 }
 
 export function toQueryString(params: any): string {
@@ -91,4 +96,17 @@ export function generateCrossScramble(level: number): Scramble | null {
   return randomScramble
     .split('')
     .map(s => moveNames[s.charCodeAt(0) - 'A'.charCodeAt(0)]);
+}
+
+export function randomChoice<T>(choices: T[], probs: number[]): T {
+  const total = probs.reduce((acc, value) => acc + value, 0);
+  const r = Math.random() * total;
+  let upto = 0;
+  for (let i = 0; i < probs.length; i++) {
+    if (upto + probs[i] >= r) {
+      return choices[i];
+    }
+    upto += probs[i];
+  }
+  return choices[choices.length - 1];
 }

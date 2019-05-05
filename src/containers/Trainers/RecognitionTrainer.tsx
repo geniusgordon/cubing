@@ -18,14 +18,9 @@ import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import AppBar from '../../components/AppBar';
 import CubeImage from '../../components/CubeImage';
-import { SettingContext } from '../../components/Settings';
-import { generateCase, caseToString } from '../../utils';
-import {
-  Alg,
-  ColorNeutrality,
-  TrainerHistory,
-  TestCase,
-} from '../../data/types';
+import { useSettings } from '../../hooks/useLocalStorage';
+import { generateCase, caseToString, randomChoice } from '../../utils';
+import { Alg, ColorNeutrality, FlashCard, TestCase } from '../../data/types';
 
 const styles = createStyles({
   container: {
@@ -65,14 +60,14 @@ function RecognitionTrainer({
   const matches = useMediaQuery(theme.breakpoints.up('sm'));
   const imageSize = matches ? 200 : 120;
 
+  // const [flashCards,  setFlashCards] = React.useState<>()
   const [currentCase, setCurrentCase] = React.useState<TestCase | null>(null);
   const [currentGuess, setCurrentGuess] = React.useState<string | null>(null);
-  const [trainerHistory, setHistory] = React.useState<TrainerHistory[]>([]);
-  const { settings, updateSettings } = React.useContext(SettingContext);
+  const [settings, updateSettings] = useSettings();
 
   const nextCase = React.useCallback(() => {
-    const n = Math.floor(Math.random() * cases.length);
-    const case_ = generateCase(cases[n], settings.colorNeutrality);
+    const c = randomChoice(cases, [...new Array(cases.length)].map(_ => 1));
+    const case_ = generateCase(c, settings.colorNeutrality);
     setCurrentCase(case_);
     setCurrentGuess(null);
   }, [cases, settings]);
@@ -80,7 +75,7 @@ function RecognitionTrainer({
   function takeGuess(guess: string) {
     if (currentCase) {
       setCurrentGuess(guess);
-      setHistory([...trainerHistory]);
+      // setHistory([...trainerHistory]);
     }
   }
 

@@ -10,16 +10,15 @@ export interface AlgGroup {
 
 export interface TestCase {
   alg: Alg;
-  preAuf: String;
-  postAuf: String;
-  cnRotation: String;
-  yRotation: String;
+  preAuf: number;
+  postAuf: number;
+  cnRotation: number;
+  yRotation: number;
 }
 
-export interface TrainerHistory {
-  case_: TestCase;
-  guess: string;
-  correct: Boolean;
+export interface FlashCard<T> {
+  case: T;
+  deficiency: number;
 }
 
 export enum ColorNeutrality {
