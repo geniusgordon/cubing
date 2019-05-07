@@ -1,5 +1,10 @@
 import React from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Route,
+  Redirect,
+  Switch,
+} from 'react-router-dom';
 import Home from './containers/Home';
 import {
   PllRecognitionTrainer,
@@ -7,21 +12,28 @@ import {
   CrossTrainer,
 } from './containers/Trainers';
 
+function NoMatch() {
+  return <Redirect to="/" />;
+}
+
 function Routes() {
   return (
-    <Router basename="/cubing-tools">
-      <Route path="/" exact component={Home} />
-      <Route
-        path="/trainers/recognition/pll"
-        exact
-        component={PllRecognitionTrainer}
-      />
-      <Route
-        path="/trainers/recognition/coll"
-        exact
-        component={CollRecognitionTrainer}
-      />
-      <Route path="/trainers/cross" exact component={CrossTrainer} />
+    <Router>
+      <Switch>
+        <Route path="/" exact component={Home} />
+        <Route
+          path="/trainers/recognition/pll"
+          exact
+          component={PllRecognitionTrainer}
+        />
+        <Route
+          path="/trainers/recognition/coll"
+          exact
+          component={CollRecognitionTrainer}
+        />
+        <Route path="/trainers/cross" exact component={CrossTrainer} />
+        <Route component={NoMatch} />
+      </Switch>
     </Router>
   );
 }
