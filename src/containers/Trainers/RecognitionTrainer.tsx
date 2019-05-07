@@ -44,6 +44,7 @@ interface Props
     WithTheme,
     RouteComponentProps {
   title: string;
+  gamma?: number;
   flashCards: FlashCard<AlgWithAuf>[];
   setFlashCards(v: React.SetStateAction<FlashCard<AlgWithAuf>[]>): void;
   checkKeyInCases(key: string): boolean;
@@ -65,6 +66,7 @@ function RecognitionTrainer({
   theme,
   history,
   title,
+  gamma = 0.5,
   flashCards,
   setFlashCards,
   checkKeyInCases,
@@ -99,14 +101,16 @@ function RecognitionTrainer({
       }
       const flashCard = flashCards[flashCardIndex];
       const isCorrect = checkIsCorrect(currentCase, guess);
-      if (isCorrect) {
-        return;
-      }
+
+      const newDeficiency = isCorrect
+        ? flashCard.deficiency * (1 - gamma)
+        : flashCard.deficiency * (1 + gamma);
+
       setFlashCards([
         ...flashCards.slice(0, flashCardIndex),
         {
           ...flashCard,
-          deficiency: flashCard.deficiency + 1,
+          deficiency: newDeficiency,
         },
         ...flashCards.slice(flashCardIndex + 1),
       ]);

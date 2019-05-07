@@ -1,12 +1,12 @@
 import { Alg, AlgGroup } from './types';
 
 export const pll: Alg[] = [
-  { name: 'Ua', alg: "(y2) M2 U M U2 M' U M2" },
-  { name: 'Ub', alg: "(y2) M2 U' M U2 M' U' M2" },
+  // { name: 'Ua', alg: "(y2) M2 U M U2 M' U M2" },
+  // { name: 'Ub', alg: "(y2) M2 U' M U2 M' U' M2" },
   { name: 'Ab', alg: "(x') R U' R D2 R' U R D2 R2 (x)" },
   { name: 'Aa', alg: "(x) R' U R' D2 R U' R' D2 R2 (x')" },
-  { name: 'H', alg: "M2' U M2' U2 M2' U M2" },
-  { name: 'Z', alg: "(y) M' U M2' U M2' U M' U2 M2'" },
+  // { name: 'H', alg: "M2' U M2' U2 M2' U M2" },
+  // { name: 'Z', alg: "(y) M' U M2' U M2' U M' U2 M2'" },
   { name: 'T', alg: "R U R' U' R' F R2 U' R' U' R U R' F'" },
   { name: 'Y', alg: "F R U' R' U' R U R' F' R U R' U' R' F R F'" },
   { name: 'V', alg: "R' U R' d' R' F' R2 U' R' U R' F R F" },
@@ -31,10 +31,10 @@ export const pll: Alg[] = [
 ];
 
 export const pllGroups: AlgGroup[] = [
-  {
-    name: 'Edge',
-    cases: ['U', 'Z', 'H'],
-  },
+  // {
+  //   name: 'Edge',
+  //   cases: ['U', 'Z', 'H'],
+  // },
   {
     name: 'Corner',
     cases: ['A', 'E'],
@@ -72,14 +72,14 @@ export const coll: Alg[] = [
   { name: 'U4', alg: "R2 D' (R U2' R') D (R U2' R)" },
   { name: 'U5', alg: "y2 (R' U R U') x' (U L' U L) U2' (R U' R' U) x" },
   { name: 'U6', alg: "(R' U2 R) F (U' R' U' R) U F'" },
-  { name: 'Pi1', alg: "R U2' R2 U' R2 U' R2 U2' R" },
-  { name: 'Pi2', alg: "(R U' R' U2') (L' U R U') L R' U2' R U R'" },
-  { name: 'Pi3', alg: "y (L' U R U' L U R') (R' U' R U' R' U2' R)" },
-  { name: 'Pi4', alg: "y' (R' U2' R U R' U R) (R U' L' U R' U' L)" },
-  { name: 'Pi5', alg: "y2 (L' U R U') L U' R' (U' R U' R')" },
-  { name: 'Pi6', alg: "y F (U R U' R') (U R U2' R') (U' R U R') F'" },
-  { name: 'H1', alg: "(R U R' U) (R U' R' U) R U2' R'" },
-  { name: 'H2', alg: "y F (R U R' U') (R U R' U') (R U R' U') F'" },
-  { name: 'H3', alg: "F (R U' R' U) (R U2' R' U') (R U R' U') F'" },
-  { name: 'H4', alg: "(R U R' U) (R U L' U) R' U' L" },
+  // { name: 'Pi1', alg: "R U2' R2 U' R2 U' R2 U2' R" },
+  // { name: 'Pi2', alg: "(R U' R' U2') (L' U R U') L R' U2' R U R'" },
+  // { name: 'Pi3', alg: "y (L' U R U' L U R') (R' U' R U' R' U2' R)" },
+  // { name: 'Pi4', alg: "y' (R' U2' R U R' U R) (R U' L' U R' U' L)" },
+  // { name: 'Pi5', alg: "y2 (L' U R U') L U' R' (U' R U' R')" },
+  // { name: 'Pi6', alg: "y F (U R U' R') (U R U2' R') (U' R U R') F'" },
+  // { name: 'H1', alg: "(R U R' U) (R U' R' U) R U2' R'" },
+  // { name: 'H2', alg: "y F (R U R' U') (R U R' U') (R U R' U') F'" },
+  // { name: 'H3', alg: "F (R U' R' U) (R U2' R' U') (R U R' U') F'" },
+  // { name: 'H4', alg: "(R U R' U) (R U L' U) R' U' L" },
 ];
