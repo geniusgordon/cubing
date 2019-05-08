@@ -34,21 +34,24 @@ function useLocalStorage<T>(
     return initialValue;
   });
 
-  function setValue(value: React.SetStateAction<T>) {
-    try {
-      const valueToStore =
-        value instanceof Function ? value(storedValue) : value;
+  const setValue = React.useCallback(
+    (value: React.SetStateAction<T>) => {
+      try {
+        const valueToStore =
+          value instanceof Function ? value(storedValue) : value;
 
-      setStoredValue(valueToStore);
+        setStoredValue(valueToStore);
 
-      window.localStorage.setItem(
-        LOCAL_STORAGE_PREFIX + key,
-        JSON.stringify(valueToStore),
-      );
-    } catch (error) {
-      console.log(error);
-    }
-  }
+        window.localStorage.setItem(
+          LOCAL_STORAGE_PREFIX + key,
+          JSON.stringify(valueToStore),
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [key, storedValue],
+  );
 
   return [storedValue, setValue];
 }

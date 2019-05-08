@@ -7,7 +7,6 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import { red, green } from '@material-ui/core/colors';
-import useLocalStorage from '../../hooks/useLocalStorage';
 import { coll } from '../../data/algs';
 import { AlgWithAuf, FlashCard, TestCase } from '../../data/types';
 import RecognitionTrainer from './RecognitionTrainer';
@@ -35,34 +34,30 @@ const styles = createStyles({
 
 interface Props extends WithStyles<typeof styles> {}
 
+const defaultFlashCards: FlashCard<AlgWithAuf>[] = coll
+  .map(c =>
+    [...new Array(4)].map((_, i) => ({
+      data: { ...c, preAuf: 0 },
+      deficiency: 1,
+    })),
+  )
+  .flat();
+
+function checkKeyInCases(key: string): boolean {
+  return /[1-6]/.test(key);
+}
+
+function checkIsCorrect(case_: TestCase, guess: string | null): boolean {
+  const caseName = case_.alg.name[case_.alg.name.length - 1];
+  return guess === caseName;
+}
+
 function CollRecognitionTrainer({ classes }: Props) {
-  const [flashCards, setFlashCards] = useLocalStorage<FlashCard<AlgWithAuf>[]>(
-    'coll-recognition',
-    () =>
-      coll
-        .map(c =>
-          [...new Array(4)].map((_, i) => ({
-            data: { ...c, preAuf: 0 },
-            deficiency: 1,
-          })),
-        )
-        .flat(),
-  );
-
-  function checkKeyInCases(key: string): boolean {
-    return /[1-6]/.test(key);
-  }
-
-  function checkIsCorrect(case_: TestCase, guess: string | null): boolean {
-    const caseName = case_.alg.name[case_.alg.name.length - 1];
-    return guess === caseName;
-  }
-
   return (
     <RecognitionTrainer
       title="Coll Recognition Trainer"
-      flashCards={flashCards}
-      setFlashCards={setFlashCards}
+      flashCardName="coll-recognition"
+      defaultFlashCards={defaultFlashCards}
       checkKeyInCases={checkKeyInCases}
       checkIsCorrect={checkIsCorrect}
       renderAnswerOptions={({ currentCase, currentGuess, takeGuess }) =>

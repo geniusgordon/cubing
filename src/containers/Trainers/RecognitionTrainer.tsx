@@ -18,7 +18,8 @@ import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import AppBar from '../../components/AppBar';
 import CubeImage from '../../components/CubeImage';
-import { useSettings } from '../../hooks/useLocalStorage';
+import useEventListener from '../../hooks/useEventListener';
+import useLocalStorage, { useSettings } from '../../hooks/useLocalStorage';
 import { generateCase, caseToString, randomChoice } from '../../utils';
 import {
   AlgWithAuf,
@@ -45,8 +46,8 @@ interface Props
     RouteComponentProps {
   title: string;
   gamma?: number;
-  flashCards: FlashCard<AlgWithAuf>[];
-  setFlashCards(v: React.SetStateAction<FlashCard<AlgWithAuf>[]>): void;
+  flashCardName: string;
+  defaultFlashCards: FlashCard<AlgWithAuf>[];
   checkKeyInCases(key: string): boolean;
   checkIsCorrect(case_: TestCase, guess: string | null): boolean;
   renderAnswerOptions(props: {
@@ -67,8 +68,8 @@ function RecognitionTrainer({
   history,
   title,
   gamma = 0.5,
-  flashCards,
-  setFlashCards,
+  flashCardName,
+  defaultFlashCards,
   checkKeyInCases,
   checkIsCorrect,
   renderAnswerOptions,
@@ -78,71 +79,82 @@ function RecognitionTrainer({
 
   const [settings, updateSettings] = useSettings();
 
+  const [flashCards, setFlashCards] = useLocalStorage<FlashCard<AlgWithAuf>[]>(
+    flashCardName,
+    defaultFlashCards,
+  );
   const [currentCase, setCurrentCase] = React.useState<TestCase>(() =>
     generateNextCase(flashCards, settings.colorNeutrality),
   );
   const [currentGuess, setCurrentGuess] = React.useState<string | null>(null);
 
-  function nextCase(cn: ColorNeutrality) {
-    const case_ = generateNextCase(flashCards, cn);
-    setCurrentCase(case_);
-    setCurrentGuess(null);
-  }
+  const nextCase = React.useCallback(
+    (cn: ColorNeutrality) => {
+      const case_ = generateNextCase(flashCards, cn);
+      setCurrentCase(case_);
+      setCurrentGuess(null);
+    },
+    [flashCards],
+  );
 
-  function takeGuess(guess: string) {
-    if (currentCase) {
-      setCurrentGuess(guess);
+  const takeGuess = React.useCallback(
+    (guess: string) => {
+      if (currentCase) {
+        setCurrentGuess(guess);
 
-      const flashCardIndex = flashCards.findIndex(
-        f => f.data === currentCase.alg,
-      );
-      if (flashCardIndex === -1) {
-        return;
+        const flashCardIndex = flashCards.findIndex(
+          f => f.data === currentCase.alg,
+        );
+        if (flashCardIndex === -1) {
+          return;
+        }
+        const flashCard = flashCards[flashCardIndex];
+        const isCorrect = checkIsCorrect(currentCase, guess);
+
+        const newDeficiency = isCorrect
+          ? flashCard.deficiency * (1 - gamma)
+          : flashCard.deficiency * (1 + gamma);
+
+        setFlashCards([
+          ...flashCards.slice(0, flashCardIndex),
+          {
+            ...flashCard,
+            deficiency: newDeficiency,
+          },
+          ...flashCards.slice(flashCardIndex + 1),
+        ]);
       }
-      const flashCard = flashCards[flashCardIndex];
-      const isCorrect = checkIsCorrect(currentCase, guess);
+    },
+    [currentCase, flashCards, gamma, checkIsCorrect, setFlashCards],
+  );
 
-      const newDeficiency = isCorrect
-        ? flashCard.deficiency * (1 - gamma)
-        : flashCard.deficiency * (1 + gamma);
+  const handleKeyup = React.useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === ' ') {
+        nextCase(settings.colorNeutrality);
+        return true;
+      }
 
-      setFlashCards([
-        ...flashCards.slice(0, flashCardIndex),
-        {
-          ...flashCard,
-          deficiency: newDeficiency,
-        },
-        ...flashCards.slice(flashCardIndex + 1),
-      ]);
-    }
-  }
+      if (checkKeyInCases(e.key.toUpperCase())) {
+        takeGuess(e.key.toUpperCase());
+      }
+    },
+    [settings.colorNeutrality, nextCase, takeGuess, checkKeyInCases],
+  );
 
-  function handleKeyup(e: KeyboardEvent) {
-    if (e.key === ' ') {
+  const handleCnChange = React.useCallback(
+    (e: any) => {
+      updateSettings({ colorNeutrality: e.target.value });
       nextCase(settings.colorNeutrality);
-      return true;
-    }
+    },
+    [settings.colorNeutrality, updateSettings, nextCase],
+  );
 
-    if (checkKeyInCases(e.key.toUpperCase())) {
-      takeGuess(e.key.toUpperCase());
-    }
-  }
-
-  function handleCnChange(e: any) {
-    updateSettings({ colorNeutrality: e.target.value });
+  const handleImageClick = React.useCallback(() => {
     nextCase(settings.colorNeutrality);
-  }
+  }, [settings.colorNeutrality, nextCase]);
 
-  function handleImageClick() {
-    nextCase(settings.colorNeutrality);
-  }
-
-  React.useEffect(() => {
-    document.addEventListener('keyup', handleKeyup);
-    return () => {
-      document.removeEventListener('keyup', handleKeyup);
-    };
-  });
+  useEventListener('keyup', handleKeyup);
 
   function goBack() {
     history.goBack();
