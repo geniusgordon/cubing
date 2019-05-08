@@ -20,14 +20,18 @@ interface Props extends WithStyles<typeof styles> {
   left?: React.ReactNode;
 }
 
-function Bar({ classes, title, left }: Props) {
+function Bar({ classes, title = 'Cubing Tools', left }: Props) {
+  React.useEffect(() => {
+    document.title = title;
+  }, [title]);
+
   return (
     <AppBar position="static">
       <Toolbar>
         {left}
         <Typography variant="h6" color="inherit" className={classes.title}>
           <Link to="/" className={classes.link}>
-            {title || 'Cubing Tools'}
+            {title}
           </Link>
         </Typography>
       </Toolbar>

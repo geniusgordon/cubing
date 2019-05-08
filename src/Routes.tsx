@@ -10,6 +10,7 @@ import {
   PllRecognitionTrainer,
   CollRecognitionTrainer,
   CrossTrainer,
+  ZbllTrainer,
 } from './containers/Trainers';
 
 function NoMatch() {
@@ -32,6 +33,7 @@ function Routes() {
           component={CollRecognitionTrainer}
         />
         <Route path="/trainers/cross" exact component={CrossTrainer} />
+        <Route path="/trainers/zbll" exact component={ZbllTrainer} />
         <Route component={NoMatch} />
       </Switch>
     </Router>
