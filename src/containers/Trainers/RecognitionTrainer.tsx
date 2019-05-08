@@ -18,8 +18,7 @@ import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import AppBar from '../../components/AppBar';
 import CubeImage from '../../components/CubeImage';
-import useEventListener from '../../hooks/useEventListener';
-import useLocalStorage, { useSettings } from '../../hooks/useLocalStorage';
+import { useEventListener, useLocalStorage, useSettings } from '../../hooks';
 import { generateCase, caseToString, randomChoice } from '../../utils';
 import {
   AlgWithAuf,

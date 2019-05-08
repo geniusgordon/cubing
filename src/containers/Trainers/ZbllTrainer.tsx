@@ -11,9 +11,6 @@ function ZbllTrainer({ history }: Props) {
     history.goBack();
   }
 
-  React.useEffect(() => {
-  });
-
   return (
     <>
       <AppBar

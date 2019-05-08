@@ -12,7 +12,7 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Typography from '@material-ui/core/Typography';
 import AppBar from '../../components/AppBar';
-import { useSettings } from '../../hooks/useLocalStorage';
+import { useSettings } from '../../hooks';
 import { generateCrossScramble } from '../../utils';
 import { Scramble } from '../../data/types';
 
