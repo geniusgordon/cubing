@@ -4,6 +4,7 @@ import IconButton from '@material-ui/core/IconButton';
 import BackIcon from '@material-ui/icons/ArrowBack';
 import AppBar from '../../components/AppBar';
 import { useTimer } from '../../hooks';
+import zbllMap from '../../data/zbll';
 
 interface Props extends RouteComponentProps {}
 

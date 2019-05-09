@@ -1,4 +1,4 @@
-export const crossScrambles: string[][] = [
+const crossScrambles: string[][] = [
   [
     // 1
     'ERENIOBFBRLBNJNLHQJNL',
@@ -8031,3 +8031,5 @@ export const crossScrambles: string[][] = [
     'KGKRIFMLCRDBHQHEHFNF',
   ],
 ];
+
+export default crossScrambles;

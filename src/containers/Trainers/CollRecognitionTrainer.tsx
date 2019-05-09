@@ -7,7 +7,7 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import { red, green } from '@material-ui/core/colors';
-import { coll } from '../../data/algs';
+import coll from '../../data/coll';
 import { AlgWithAuf, FlashCard, TestCase } from '../../data/types';
 import RecognitionTrainer from './RecognitionTrainer';
 import CubeImage from '../../components/CubeImage';

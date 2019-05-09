@@ -1,5 +1,5 @@
 import { Alg, ColorNeutrality, Scramble, TestCase } from './data/types';
-import { crossScrambles } from './data/scrambles';
+import crossScrambles from './data/cross';
 
 function numToAuf(n: number): string {
   const auf = ['', 'U', 'U2', "U'"];
