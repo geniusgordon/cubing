@@ -1,34 +1,70 @@
-import { Alg } from './types';
+import { Alg, AlgMap } from './types';
 
-const coll: Alg[] = [
-  { name: 'L1', alg: "y R U2' R' (U' R U R') (U' R U R') (U' R U' R') " },
-  { name: 'L2', alg: "y2 R U2' (L' U L) U2' R' (L' U L)" },
-  { name: 'L3', alg: "y' (R U2' R D) (R' U2 R D') R2" },
-  { name: 'L4', alg: "y2 (R' U2' R' D') (R U2' R' D) R2" },
-  { name: 'L5', alg: "y' L' (R U R' U') L (U R U' R')" },
-  { name: 'L6', alg: "y2 x' (U' R U L') (U' R' U r)" },
-  { name: 'T1', alg: "(R U2' R' U' R U' R2') (U2' R U R' U R)" },
-  { name: 'T2', alg: "y2 F (R U R' U') (R U' R' U') (R U R' F')" },
-  { name: 'T3', alg: "(R' U R) U2' L' (R' U R U') L" },
-  { name: 'T4', alg: "y2 (R U' R2' D') (r U2' r') (D R2 U R')" },
-  { name: 'T5', alg: "y' (r' U' R U) (L U' R' U) x" },
-  { name: 'T6', alg: "y' (r U R' U') (L' U R U') x'" },
-  { name: 'U1', alg: "y2 (R U R' U R U2' R2') (U' R U' R' U2 R) " },
-  { name: 'U2', alg: "F (R U' R' U) (R U R' U) (R U' R' F')" },
-  { name: 'U3', alg: "y2 R2 D (R' U2' R) D' (R' U2' R')" },
-  { name: 'U4', alg: "R2 D' (R U2' R') D (R U2' R)" },
-  { name: 'U5', alg: "y2 (R' U R U') x' (U L' U L) U2' (R U' R' U) x" },
-  { name: 'U6', alg: "(R' U2 R) F (U' R' U' R) U F'" },
-  // { name: 'Pi1', alg: "R U2' R2 U' R2 U' R2 U2' R" },
-  // { name: 'Pi2', alg: "(R U' R' U2') (L' U R U') L R' U2' R U R'" },
-  // { name: 'Pi3', alg: "y (L' U R U' L U R') (R' U' R U' R' U2' R)" },
-  // { name: 'Pi4', alg: "y' (R' U2' R U R' U R) (R U' L' U R' U' L)" },
-  // { name: 'Pi5', alg: "y2 (L' U R U') L U' R' (U' R U' R')" },
-  // { name: 'Pi6', alg: "y F (U R U' R') (U R U2' R') (U' R U R') F'" },
-  // { name: 'H1', alg: "(R U R' U) (R U' R' U) R U2' R'" },
-  // { name: 'H2', alg: "y F (R U R' U') (R U R' U') (R U R' U') F'" },
-  // { name: 'H3', alg: "F (R U' R' U) (R U2' R' U') (R U R' U') F'" },
-  // { name: 'H4', alg: "(R U R' U) (R U L' U) R' U' L" },
-];
+interface CollMap {
+  [group: string]: AlgMap;
+}
 
-export default coll;
+interface CollGroups {
+  [name: string]: string[];
+}
+
+const collMap: CollMap = {
+  U: {
+    BBFF: "R' (F R U' R' U' R U R' F') (R U R' U' R' F R F') R",
+    BFFB: "F (R U' R' U) (R U R' U) (R U' R' F')",
+    FFLR: "(R' U2 R) F (U' R' U' R) U F'",
+    FRLF: "R2 D' (R U2' R') D (R U2' R)",
+    LFFR: "y2 R2 D (R' U2' R) D' (R' U2' R')",
+    LRFF: "y2 (R U R' U R U2' R2') (U' R U' R' U2 R)",
+  },
+  T: {
+    BBFF: "(R U2' R' U' R U' R2') (U2' R U R' U R)",
+    FBFB: "y2 (R U' R2' D') (r U2' r') (D R2 U R')",
+    FFLR: "y2 F (R U R' U') (R U' R' U') (R U R' F')",
+    FLFR: "y' (r U R' U') (L' U R U') x'",
+    RFLF: "y' (r' U' R U) (L U' R' U) x",
+    RLFF: "(R' U R) U2' L' (R' U R U') L",
+  },
+  L: {
+    LRFF: "R U2' R' (U' R U R') (U' R U R') (U' R U' R')",
+    FBRL: "y R U2' (L' U L) U2' R' (L' U L)",
+    LFFB: "y2 (R U2' R D) (R' U2 R D') R2",
+    LFFR: "y (R' U2' R' D') (R U2' R' D) R2",
+    RFBL: "y2 L' (R U R' U') L (U R U' R')",
+    LBFF: "y x' (U' R U L') (U' R' U r)",
+  },
+  H: {
+    BBFF: "(R U R' U) (R U' R' U) R U2' R'",
+    FBFB: "y F (R U R' U') (R U R' U') (R U R' U') F'",
+    RLFF: "F (R U' R' U) (R U2' R' U') (R U R' U') F'",
+    RFLF: "(R U R' U) (R U L' U) R' U' L",
+  },
+  Pi: {
+    LFRF: "R U2' R2 U' R2 U' R2 U2' R",
+    FRFL: "(R U' R' U2') (L' U R U') L R' U2' R U R'",
+    FRLF: "y (L' U R U' L U R') (R' U' R U' R' U2' R)",
+    RFFL: "y' (R' U2' R U R' U R) (R U' L' U R' U' L)",
+    FBFB: "y2 (L' U R U') L U' R' (U' R U' R')",
+    BFFB: "y F (U R U' R') (U R U2' R') (U' R U R') F'",
+  },
+};
+
+const collGroups: CollGroups = {
+  U: Object.keys(collMap.U),
+  T: Object.keys(collMap.T),
+  L: Object.keys(collMap.L),
+  H: Object.keys(collMap.H),
+  Pi: Object.keys(collMap.Pi),
+};
+
+const collAlgs: Alg[] = Object.keys(collMap)
+  .map(group =>
+    collGroups[group].map(name => ({
+      name: `${group}/${name}`,
+      alg: collMap[group][name],
+    })),
+  )
+  .flat();
+
+export default collMap;
+export { collGroups, collAlgs };

@@ -4,7 +4,7 @@ import { createStyles, withStyles, WithStyles } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import { red, green } from '@material-ui/core/colors';
-import pll, { pllGroups } from '../../data/pll';
+import pllMap, { pllGroups, pllAlgs } from '../../data/pll';
 import { AlgWithAuf, FlashCard, TestCase } from '../../data/types';
 import RecognitionTrainer from './RecognitionTrainer';
 
@@ -30,18 +30,18 @@ const styles = createStyles({
 
 interface Props extends WithStyles<typeof styles> {}
 
-const defaultFlashCards: FlashCard<AlgWithAuf>[] = pll
-  .map(p =>
+const defaultFlashCards: FlashCard<AlgWithAuf>[] = pllAlgs
+  .map(algs =>
     [...new Array(4)].map((_, i) => ({
-      data: { ...p, preAuf: 0 },
+      data: { ...algs, preAuf: 0 },
       deficiency: 1,
     })),
   )
   .flat();
 
-function checkKeyInCases(key: string): boolean {
+function checkKeyInCases(case_: TestCase, key: string): boolean {
   if (/[a-zA-Z]/.test(key)) {
-    return pllGroups.some(group => group.cases.includes(key));
+    return Object.keys(pllMap).includes(key);
   }
   return false;
 }

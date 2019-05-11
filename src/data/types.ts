@@ -7,9 +7,8 @@ export interface AlgWithAuf extends Alg {
   preAuf: number;
 }
 
-export interface AlgGroup {
-  name: string;
-  cases: string[];
+export interface AlgMap {
+  [name: string]: string;
 }
 
 export interface TestCase {

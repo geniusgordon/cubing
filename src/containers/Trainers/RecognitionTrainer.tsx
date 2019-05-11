@@ -47,18 +47,13 @@ interface Props
   gamma?: number;
   flashCardName: string;
   defaultFlashCards: FlashCard<AlgWithAuf>[];
-  checkKeyInCases(key: string): boolean;
+  checkKeyInCases(case_: TestCase, key: string): boolean;
   checkIsCorrect(case_: TestCase, guess: string | null): boolean;
   renderAnswerOptions(props: {
     currentCase: TestCase;
     currentGuess: string | null;
     takeGuess(guess: string): void;
   }): React.ReactNode;
-}
-
-function generateNextCase(cards: FlashCard<AlgWithAuf>[], cn: ColorNeutrality) {
-  const c = randomChoice(cards, cards.map(f => f.deficiency));
-  return generateCase(c.data, { cn, preAuf: c.data.preAuf });
 }
 
 function RecognitionTrainer({
@@ -82,18 +77,27 @@ function RecognitionTrainer({
     flashCardName,
     defaultFlashCards,
   );
+
+  const pickCaseFromFlashCards = React.useCallback(
+    (cn: ColorNeutrality) => {
+      const c = randomChoice(flashCards, flashCards.map(f => f.deficiency));
+      return generateCase(c.data, { cn, preAuf: c.data.preAuf });
+    },
+    [flashCards],
+  );
+
   const [currentCase, setCurrentCase] = React.useState<TestCase>(() =>
-    generateNextCase(flashCards, settings.colorNeutrality),
+    pickCaseFromFlashCards(settings.colorNeutrality),
   );
   const [currentGuess, setCurrentGuess] = React.useState<string | null>(null);
 
-  const nextCase = React.useCallback(
+  const generateNextCase = React.useCallback(
     (cn: ColorNeutrality) => {
-      const case_ = generateNextCase(flashCards, cn);
+      const case_ = pickCaseFromFlashCards(cn);
       setCurrentCase(case_);
       setCurrentGuess(null);
     },
-    [flashCards],
+    [pickCaseFromFlashCards],
   );
 
   const takeGuess = React.useCallback(
@@ -130,28 +134,34 @@ function RecognitionTrainer({
   const handleKeyup = React.useCallback(
     (e: KeyboardEvent) => {
       if (e.key === ' ') {
-        nextCase(settings.colorNeutrality);
+        generateNextCase(settings.colorNeutrality);
         return true;
       }
 
-      if (checkKeyInCases(e.key.toUpperCase())) {
+      if (checkKeyInCases(currentCase, e.key.toUpperCase())) {
         takeGuess(e.key.toUpperCase());
       }
     },
-    [settings.colorNeutrality, nextCase, takeGuess, checkKeyInCases],
+    [
+      settings.colorNeutrality,
+      currentCase,
+      generateNextCase,
+      takeGuess,
+      checkKeyInCases,
+    ],
   );
 
   const handleCnChange = React.useCallback(
     (e: any) => {
       updateSettings({ colorNeutrality: e.target.value });
-      nextCase(settings.colorNeutrality);
+      generateNextCase(settings.colorNeutrality);
     },
-    [settings.colorNeutrality, updateSettings, nextCase],
+    [settings.colorNeutrality, updateSettings, generateNextCase],
   );
 
   const handleImageClick = React.useCallback(() => {
-    nextCase(settings.colorNeutrality);
-  }, [settings.colorNeutrality, nextCase]);
+    generateNextCase(settings.colorNeutrality);
+  }, [settings.colorNeutrality, generateNextCase]);
 
   useEventListener('keyup', handleKeyup);
 
