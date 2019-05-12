@@ -5584,7 +5584,7 @@ const zbllMap: ZbllMap = {
         "L' U L F' L2 U' F L' F' U L' F L'",
       ],
       OsC: [
-        "B' L2 D F' U F' U' F D' L2 B' U B2",
+        "U' B' L2 D F' U F' U' F D' L2 B' U B2",
         "D F2 D' L2 U B2 L D' R2 D L' B2 L2",
         "F2 D' L2 U B2 L D' R2 D L' B2 L2 U2 D",
         "L2 D L R U2 L B2 R U R' B2 R' F2",
@@ -5626,7 +5626,7 @@ const zbllMap: ZbllMap = {
         "R' U' R U' R' U2 R2 U' L' U R' U' L",
       ],
       OxO: [
-        "R2 U' R2 U R2 B2 R2 F' U B2 U' F R2 B2",
+        "U' R2 U' R2 U R2 B2 R2 F' U B2 U' F R2 B2",
         "D' F2 U' F2 D R2 B2 R2 F' U B2 U' F R2 B2",
         "D' L' F2 U2 L' U2 F2 D L2 U2 L U' F2 U' L2",
         "F2 U' F2 U F2 R2 F2 L' U R2 U' L F2 R2",
@@ -5656,7 +5656,7 @@ const zbllMap: ZbllMap = {
         "R' U' R U' R' U2 R2 U R' U R U2 R'",
       ],
       AsC: [
-        "R U' L2 U B L2 B' R' F U2 F' U' L2",
+        "U R U' L2 U B L2 B' R' F U2 F' U' L2",
         "D L D' F2 L2 U' L2 D F2 L' D' F2 U F2",
         "D' F' U2 F' U2 F D R2 D' F U F' D R2",
         "D' B' R2 F' R2 B D R2 D' F U F' D R2",

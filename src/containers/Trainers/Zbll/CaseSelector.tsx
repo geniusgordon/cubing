@@ -1,6 +1,4 @@
 import React from 'react';
-import classNames from 'classnames';
-import { unstable_useMediaQuery as useMediaQuery } from '@material-ui/core/useMediaQuery';
 import {
   createStyles,
   withStyles,
@@ -9,34 +7,24 @@ import {
   WithTheme,
 } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
-import { green } from '@material-ui/core/colors';
-import CubeImage from '../../../components/CubeImage';
 import collMap, { collGroups, ollAlgs } from '../../../data/coll';
 import zbllMap from '../../../data/zbll';
+import { Alg } from '../../../data/types';
+import AlgGroup from './AlgGroup';
+import ZbllCase from './ZbllCase';
 
 const styles = createStyles({
   container: {
     marginTop: 30,
-  },
-  imageItem: {
-    cursor: 'pointer',
-  },
-  selected: {
-    backgroundColor: green[500],
   },
 });
 
 interface Props extends WithStyles<typeof styles>, WithTheme {}
 
 function CaseSelector({ classes, theme }: Props) {
-  const matches = useMediaQuery(theme.breakpoints.up('sm'));
-  const imageSize = matches ? 100 : 80;
-
   const [selectedCases, setCases] = React.useState<{ [name: string]: boolean }>(
     {},
   );
-
   const [oll, setOll] = React.useState<string | null>(null);
   const [coll, setColl] = React.useState<string | null>(null);
 
@@ -44,9 +32,9 @@ function CaseSelector({ classes, theme }: Props) {
     if (!oll) {
       return null;
     }
-    return collGroups[oll].map(coll => ({
-      name: coll,
-      alg: collMap[oll][coll],
+    return collGroups[oll].map(c => ({
+      name: `${oll}/${c}`,
+      alg: collMap[oll][c],
     }));
   }, [oll]);
 
@@ -54,72 +42,91 @@ function CaseSelector({ classes, theme }: Props) {
     if (!oll || !coll) {
       return null;
     }
-    return Object.keys(zbllMap[oll][coll]).map(zbll => ({
-      name: zbll,
-      alg: zbllMap[oll][coll][zbll][0],
+    const c = coll.split('/')[1];
+    return Object.keys(zbllMap[oll][c]).map(zbll => ({
+      name: `${oll}/${c}/${zbll}`,
+      alg: zbllMap[oll][c][zbll][0],
     }));
   }, [oll, coll]);
 
+  const selectedCount = React.useMemo(() => {
+    const count: { [name: string]: number } = {};
+    Object.keys(selectedCases).forEach(key => {
+      const parts = key.split('/');
+      const oll = parts[0];
+      const coll = parts[0] + '/' + parts[1];
+      if (selectedCases[key]) {
+        count[oll] = count[oll] ? count[oll] + 1 : 1;
+        count[coll] = count[coll] ? count[coll] + 1 : 1;
+      }
+    });
+    return count;
+  }, [selectedCases]);
+
+  const handleOllSelect = React.useCallback((alg: Alg) => {
+    setColl(null);
+    setOll(alg.name);
+  }, []);
+
+  const handleCollSelect = React.useCallback((alg: Alg) => {
+    setColl(alg.name);
+  }, []);
+
+  const handleZbllSelect = React.useCallback(
+    (alg: Alg) => {
+      setCases({
+        ...selectedCases,
+        [alg.name]: !selectedCases[alg.name],
+      });
+    },
+    [selectedCases],
+  );
+
+  const handleAllClick = React.useCallback((alg: Alg) => {}, []);
+
+  const handleNoneClick = React.useCallback((alg: Alg) => {}, []);
+
   return (
     <Grid container justify="center" spacing={8} className={classes.container}>
-      {ollAlgs.map(({ name, alg }) => (
-        <Grid
-          key={name}
-          item
-          onClick={() => {
-            setColl(null);
-            setOll(name);
-          }}
-          className={classes.imageItem}
-        >
-          <CubeImage alg={alg} size={imageSize} stage="oll" view="plan" />
-        </Grid>
+      {ollAlgs.map(alg => (
+        <AlgGroup
+          key={alg.name}
+          active={alg.name === oll}
+          alg={alg}
+          stage="oll"
+          selectedCount={selectedCount}
+          onSelect={handleOllSelect}
+          onAllClick={handleAllClick}
+          onNoneClick={handleNoneClick}
+        />
       ))}
       <Grid container justify="center" spacing={8}>
         {selectedOllCollAlgs &&
-          selectedOllCollAlgs.map(({ name, alg }) => (
-            <Grid
-              key={name}
-              item
-              onClick={() => setColl(name)}
-              className={classes.imageItem}
-            >
-              <CubeImage alg={alg} size={imageSize} stage="coll" view="plan" />
-            </Grid>
+          selectedOllCollAlgs.map(alg => (
+            <AlgGroup
+              key={alg.name}
+              active={alg.name === coll}
+              alg={alg}
+              stage="coll"
+              selectedCount={selectedCount}
+              onSelect={handleCollSelect}
+              onAllClick={handleAllClick}
+              onNoneClick={handleNoneClick}
+            />
           ))}
       </Grid>
       <Grid container justify="center">
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} sm={6} lg={4}>
           <Grid container justify="center" spacing={8}>
             {selectedCollZbllAlgs &&
-              selectedCollZbllAlgs.map(({ name, alg }) => {
-                const caseName = `${oll}/${coll}/${name}`;
-                return (
-                  <Grid
-                    key={name}
-                    item
-                    className={classes.imageItem}
-                    onClick={() =>
-                      setCases({
-                        ...selectedCases,
-                        [caseName]: !selectedCases[caseName],
-                      })
-                    }
-                  >
-                    <div
-                      className={classNames({
-                        [classes.selected]: selectedCases[caseName],
-                      })}
-                    >
-                      <CubeImage
-                        alg={alg}
-                        size={imageSize * 0.75}
-                        view="plan"
-                      />
-                    </div>
-                  </Grid>
-                );
-              })}
+              selectedCollZbllAlgs.map(alg => (
+                <ZbllCase
+                  key={alg.name}
+                  alg={alg}
+                  selected={selectedCases[alg.name]}
+                  onSelect={handleZbllSelect}
+                />
+              ))}
           </Grid>
         </Grid>
       </Grid>
