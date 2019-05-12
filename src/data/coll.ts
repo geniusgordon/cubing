@@ -57,6 +57,8 @@ const collGroups: CollGroups = {
   Pi: Object.keys(collMap.Pi),
 };
 
+const ollGroups = ['H', 'Pi', 'U', 'T', 'L'];
+
 const collAlgs: Alg[] = Object.keys(collMap)
   .map(group =>
     collGroups[group].map(name => ({
@@ -66,5 +68,10 @@ const collAlgs: Alg[] = Object.keys(collMap)
   )
   .flat();
 
+const ollAlgs = ollGroups.map(group => ({
+  name: group,
+  alg: collMap[group][collGroups[group][0]],
+}));
+
 export default collMap;
-export { collGroups, collAlgs };
+export { collGroups, collAlgs, ollGroups, ollAlgs };

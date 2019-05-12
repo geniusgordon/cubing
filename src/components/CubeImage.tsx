@@ -34,6 +34,7 @@ function CubeImage({ size = 200, alg, view, stage, classes }: Props) {
 
   const queryString = toQueryString({
     fmt: 'svg',
+    bg: 't',
     case: alg,
     view,
     stage,
