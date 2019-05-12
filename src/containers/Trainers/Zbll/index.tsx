@@ -9,8 +9,14 @@ import CaseSelector from './CaseSelector';
 interface Props extends RouteComponentProps {}
 
 function ZbllTrainer({ history }: Props) {
+  const [caseSelectorOpen, setCaseSelectorOpen] = React.useState<boolean>(true);
+
   function goBack() {
     history.goBack();
+  }
+
+  function handleCaseSelectorClose() {
+    setCaseSelectorOpen(false);
   }
 
   return (
@@ -23,7 +29,7 @@ function ZbllTrainer({ history }: Props) {
           </IconButton>
         }
       />
-      <CaseSelector />
+      <CaseSelector open={caseSelectorOpen} onClose={handleCaseSelectorClose} />
     </>
   );
 }

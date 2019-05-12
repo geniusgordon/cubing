@@ -7,6 +7,14 @@ import {
   WithTheme,
 } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
+import Dialog from '@material-ui/core/Dialog';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Slide from '@material-ui/core/Slide';
+import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import Typography from '@material-ui/core/Typography';
+import CloseIcon from '@material-ui/icons/Close';
 import collMap, { collGroups, ollAlgs } from '../../../data/coll';
 import zbllMap from '../../../data/zbll';
 import { Alg } from '../../../data/types';
@@ -14,14 +22,31 @@ import AlgGroup from './AlgGroup';
 import ZbllCase from './ZbllCase';
 
 const styles = createStyles({
+  dialog: {
+    width: '100%',
+    overflowX: 'hidden',
+  },
   container: {
     marginTop: 30,
   },
+  appBar: {
+    position: 'relative',
+  },
+  flex: {
+    flex: 1,
+  },
 });
 
-interface Props extends WithStyles<typeof styles>, WithTheme {}
+interface Props extends WithStyles<typeof styles>, WithTheme {
+  open: boolean;
+  onClose(): void;
+}
 
-function CaseSelector({ classes, theme }: Props) {
+function Transition(props: any) {
+  return <Slide direction="up" {...props} />;
+}
+
+function CaseSelector({ classes, theme, open, onClose }: Props) {
   const [selectedCases, setCases] = React.useState<{ [name: string]: boolean }>(
     {},
   );
@@ -82,55 +107,115 @@ function CaseSelector({ classes, theme }: Props) {
     [selectedCases],
   );
 
-  const handleAllClick = React.useCallback((alg: Alg) => {}, []);
+  const handleAllClick = React.useCallback(
+    (alg: Alg) => {
+      const parts = alg.name.split('/');
+      const oll = parts[0];
+      let s = { ...selectedCases };
+      if (parts.length === 1) {
+        collGroups[oll].forEach(coll => {
+          Object.keys(zbllMap[oll][coll]).forEach(zbll => {
+            s[`${oll}/${coll}/${zbll}`] = true;
+          });
+        });
+      } else {
+        const coll = parts[1];
+        Object.keys(zbllMap[oll][coll]).forEach(zbll => {
+          s[`${oll}/${coll}/${zbll}`] = true;
+        });
+      }
+      setCases(s);
+    },
+    [selectedCases],
+  );
 
-  const handleNoneClick = React.useCallback((alg: Alg) => {}, []);
+  const handleNoneClick = React.useCallback(
+    (alg: Alg) => {
+      const parts = alg.name.split('/');
+      const oll = parts[0];
+      let s = { ...selectedCases };
+      if (parts.length === 1) {
+        collGroups[oll].forEach(coll => {
+          Object.keys(zbllMap[oll][coll]).forEach(zbll => {
+            s[`${oll}/${coll}/${zbll}`] = false;
+          });
+        });
+      } else {
+        const coll = parts[1];
+        Object.keys(zbllMap[oll][coll]).forEach(zbll => {
+          s[`${oll}/${coll}/${zbll}`] = false;
+        });
+      }
+      setCases(s);
+    },
+    [selectedCases],
+  );
 
   return (
-    <Grid container justify="center" spacing={8} className={classes.container}>
-      {ollAlgs.map(alg => (
-        <AlgGroup
-          key={alg.name}
-          active={alg.name === oll}
-          alg={alg}
-          stage="oll"
-          selectedCount={selectedCount}
-          onSelect={handleOllSelect}
-          onAllClick={handleAllClick}
-          onNoneClick={handleNoneClick}
-        />
-      ))}
-      <Grid container justify="center" spacing={8}>
-        {selectedOllCollAlgs &&
-          selectedOllCollAlgs.map(alg => (
-            <AlgGroup
-              key={alg.name}
-              active={alg.name === coll}
-              alg={alg}
-              stage="coll"
-              selectedCount={selectedCount}
-              onSelect={handleCollSelect}
-              onAllClick={handleAllClick}
-              onNoneClick={handleNoneClick}
-            />
-          ))}
-      </Grid>
-      <Grid container justify="center">
-        <Grid item xs={12} sm={6} lg={4}>
-          <Grid container justify="center" spacing={8}>
-            {selectedCollZbllAlgs &&
-              selectedCollZbllAlgs.map(alg => (
-                <ZbllCase
-                  key={alg.name}
-                  alg={alg}
-                  selected={selectedCases[alg.name]}
-                  onSelect={handleZbllSelect}
-                />
-              ))}
+    <Dialog
+      fullScreen
+      open={open}
+      onClose={onClose}
+      TransitionComponent={Transition}
+    >
+      <AppBar className={classes.appBar}>
+        <Toolbar>
+          <IconButton color="inherit" onClick={onClose} aria-label="Close">
+            <CloseIcon />
+          </IconButton>
+          <Typography variant="h6" color="inherit" className={classes.flex}>
+            Zbll Case Selector
+          </Typography>
+          <Button color="inherit" onClick={onClose}>
+            Done
+          </Button>
+        </Toolbar>
+      </AppBar>
+      <Grid container justify="center" className={classes.container}>
+        {ollAlgs.map(alg => (
+          <AlgGroup
+            key={alg.name}
+            active={alg.name === oll}
+            alg={alg}
+            stage="oll"
+            selectedCount={selectedCount}
+            onSelect={handleOllSelect}
+            onAllClick={handleAllClick}
+            onNoneClick={handleNoneClick}
+          />
+        ))}
+        <Grid container justify="center">
+          {selectedOllCollAlgs &&
+            selectedOllCollAlgs.map(alg => (
+              <AlgGroup
+                key={alg.name}
+                active={alg.name === coll}
+                alg={alg}
+                stage="coll"
+                selectedCount={selectedCount}
+                onSelect={handleCollSelect}
+                onAllClick={handleAllClick}
+                onNoneClick={handleNoneClick}
+              />
+            ))}
+        </Grid>
+        <Grid container justify="center">
+          <Grid item xs={11} sm={6} lg={4}>
+            <Grid container justify="center" spacing={8}>
+              {selectedCollZbllAlgs &&
+                selectedCollZbllAlgs.map(alg => (
+                  <ZbllCase
+                    key={alg.name}
+                    alg={alg}
+                    selected={selectedCases[alg.name]}
+                    onSelect={handleZbllSelect}
+                  />
+                ))}
+            </Grid>
           </Grid>
         </Grid>
       </Grid>
-    </Grid>
+    </Dialog>
   );
 }
 

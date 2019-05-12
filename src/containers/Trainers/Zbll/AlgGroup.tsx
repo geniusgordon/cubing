@@ -23,6 +23,7 @@ const styles = createStyles({
   imageContainer: {
     cursor: 'pointer',
     position: 'relative',
+    margin: 5,
   },
   buttonContainer: {
     height: 36,
@@ -36,7 +37,7 @@ const styles = createStyles({
     bottom: 0,
     right: 0,
     color: grey[50],
-    backgroundColor: grey[500],
+    backgroundColor: grey[600],
     paddingLeft: 5,
     paddingRight: 5,
   },
@@ -98,8 +99,12 @@ function AlgGroup({
       <Grid container className={classes.buttonContainer}>
         {active && (
           <>
-            <Button onClick={handleAllClick}>All</Button>
-            <Button onClick={handleNoneClick}>None</Button>
+            <Grid item>
+              <Button onClick={handleAllClick}>All</Button>
+            </Grid>
+            <Grid item>
+              <Button onClick={handleNoneClick}>None</Button>
+            </Grid>
           </>
         )}
       </Grid>
