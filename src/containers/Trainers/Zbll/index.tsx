@@ -146,6 +146,7 @@ function ZbllTrainer({ classes, history }: Props) {
       </Grid>
       <CaseSelector
         open={caseSelectorOpen}
+        selectedCases={selectedCases}
         onClose={handleCaseSelectorClose}
         onSubmit={handleCaseSubmit}
       />

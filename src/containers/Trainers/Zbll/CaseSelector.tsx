@@ -39,6 +39,7 @@ const styles = createStyles({
 
 interface Props extends WithStyles<typeof styles>, WithTheme {
   open: boolean;
+  selectedCases: { [name: string]: boolean };
   onClose(): void;
   onSubmit(cases: { [name: string]: boolean }): void;
 }
@@ -47,10 +48,15 @@ function Transition(props: any) {
   return <Slide direction="up" {...props} />;
 }
 
-function CaseSelector({ classes, theme, open, onClose, onSubmit }: Props) {
-  const [selectedCases, setCases] = React.useState<{ [name: string]: boolean }>(
-    {},
-  );
+function CaseSelector({
+  classes,
+  theme,
+  open,
+  selectedCases,
+  onClose,
+  onSubmit,
+}: Props) {
+  const [cases, setCases] = React.useState<{ [name: string]: boolean }>({});
   const [oll, setOll] = React.useState<string | null>(null);
   const [coll, setColl] = React.useState<string | null>(null);
 
@@ -77,17 +83,17 @@ function CaseSelector({ classes, theme, open, onClose, onSubmit }: Props) {
 
   const selectedCount = React.useMemo(() => {
     const count: { [name: string]: number } = {};
-    Object.keys(selectedCases).forEach(key => {
+    Object.keys(cases).forEach(key => {
       const parts = key.split('/');
       const oll = parts[0];
       const coll = parts[0] + '/' + parts[1];
-      if (selectedCases[key]) {
+      if (cases[key]) {
         count[oll] = count[oll] ? count[oll] + 1 : 1;
         count[coll] = count[coll] ? count[coll] + 1 : 1;
       }
     });
     return count;
-  }, [selectedCases]);
+  }, [cases]);
 
   const handleOllSelect = React.useCallback((alg: Alg) => {
     setColl(null);
@@ -101,18 +107,18 @@ function CaseSelector({ classes, theme, open, onClose, onSubmit }: Props) {
   const handleZbllSelect = React.useCallback(
     (alg: Alg) => {
       setCases({
-        ...selectedCases,
-        [alg.name]: !selectedCases[alg.name],
+        ...cases,
+        [alg.name]: !cases[alg.name],
       });
     },
-    [selectedCases],
+    [cases],
   );
 
   const handleAllClick = React.useCallback(
     (alg: Alg) => {
       const parts = alg.name.split('/');
       const oll = parts[0];
-      let s = { ...selectedCases };
+      let s = { ...cases };
       if (parts.length === 1) {
         collGroups[oll].forEach(coll => {
           Object.keys(zbllMap[oll][coll]).forEach(zbll => {
@@ -127,14 +133,14 @@ function CaseSelector({ classes, theme, open, onClose, onSubmit }: Props) {
       }
       setCases(s);
     },
-    [selectedCases],
+    [cases],
   );
 
   const handleNoneClick = React.useCallback(
     (alg: Alg) => {
       const parts = alg.name.split('/');
       const oll = parts[0];
-      let s = { ...selectedCases };
+      let s = { ...cases };
       if (parts.length === 1) {
         collGroups[oll].forEach(coll => {
           Object.keys(zbllMap[oll][coll]).forEach(zbll => {
@@ -149,12 +155,16 @@ function CaseSelector({ classes, theme, open, onClose, onSubmit }: Props) {
       }
       setCases(s);
     },
-    [selectedCases],
+    [cases],
   );
 
   const handleSubmit = React.useCallback(() => {
-    onSubmit(selectedCases);
-  }, [selectedCases, onSubmit]);
+    onSubmit(cases);
+  }, [cases, onSubmit]);
+
+  React.useEffect(() => {
+    setCases(selectedCases);
+  }, [selectedCases]);
 
   return (
     <Dialog
@@ -212,7 +222,7 @@ function CaseSelector({ classes, theme, open, onClose, onSubmit }: Props) {
                   <ZbllCase
                     key={alg.name}
                     alg={alg}
-                    selected={selectedCases[alg.name]}
+                    selected={cases[alg.name]}
                     onSelect={handleZbllSelect}
                   />
                 ))}
