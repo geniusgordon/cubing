@@ -6,14 +6,16 @@ import CollAnswerOptions from './CollAnswerOptions';
 
 interface Props {}
 
-const defaultFlashCards: FlashCard<AlgWithAuf>[] = collAlgs
-  .map(alg =>
-    [...new Array(4)].map((_, i) => ({
-      data: { ...alg, preAuf: 0 },
+const defaultFlashCardMap: { [name: string]: FlashCard<AlgWithAuf> } = {};
+collAlgs.slice(0, 1).forEach(alg =>
+  [...new Array(4)].forEach((_, i) => {
+    const name = `${alg.name}-${i}`;
+    defaultFlashCardMap[name] = {
+      data: { name, alg: alg.alg, preAuf: i },
       deficiency: 1,
-    })),
-  )
-  .flat();
+    };
+  }),
+);
 
 function checkKeyInCases(case_: TestCase, key: string): boolean {
   const group = case_.alg.name.split('/')[0];
@@ -38,7 +40,7 @@ function CollRecognitionTrainer() {
     <RecognitionTrainer
       title="Coll Recognition Trainer"
       flashCardName="coll-recognition"
-      defaultFlashCards={defaultFlashCards}
+      defaultFlashCardMap={defaultFlashCardMap}
       checkKeyInCases={checkKeyInCases}
       checkIsCorrect={checkIsCorrect}
       renderAnswerOptions={({ currentCase, currentGuess, takeGuess }) => (

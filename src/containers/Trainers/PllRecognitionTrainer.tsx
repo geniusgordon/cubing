@@ -30,14 +30,16 @@ const styles = createStyles({
 
 interface Props extends WithStyles<typeof styles> {}
 
-const defaultFlashCards: FlashCard<AlgWithAuf>[] = pllAlgs
-  .map(algs =>
-    [...new Array(4)].map((_, i) => ({
-      data: { ...algs, preAuf: 0 },
+const defaultFlashCardMap: { [name: string]: FlashCard<AlgWithAuf> } = {};
+pllAlgs.slice(0, 1).forEach(alg =>
+  [...new Array(4)].forEach((_, i) => {
+    const name = `${alg.name}-${i}`;
+    defaultFlashCardMap[name] = {
+      data: { name, alg: alg.alg, preAuf: i },
       deficiency: 1,
-    })),
-  )
-  .flat();
+    };
+  }),
+);
 
 function checkKeyInCases(case_: TestCase, key: string): boolean {
   if (/[a-zA-Z]/.test(key)) {
@@ -56,7 +58,7 @@ function PllRecognitionTrainer({ classes }: Props) {
     <RecognitionTrainer
       title="Pll Recognition Trainer"
       flashCardName="pll-recognition"
-      defaultFlashCards={defaultFlashCards}
+      defaultFlashCardMap={defaultFlashCardMap}
       checkKeyInCases={checkKeyInCases}
       checkIsCorrect={checkIsCorrect}
       renderAnswerOptions={({ currentCase, currentGuess, takeGuess }) =>

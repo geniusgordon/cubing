@@ -46,7 +46,7 @@ interface Props
   title: string;
   gamma?: number;
   flashCardName: string;
-  defaultFlashCards: FlashCard<AlgWithAuf>[];
+  defaultFlashCardMap: { [name: string]: FlashCard<AlgWithAuf> };
   checkKeyInCases(case_: TestCase, key: string): boolean;
   checkIsCorrect(case_: TestCase, guess: string | null): boolean;
   renderAnswerOptions(props: {
@@ -63,7 +63,7 @@ function RecognitionTrainer({
   title,
   gamma = 0.5,
   flashCardName,
-  defaultFlashCards,
+  defaultFlashCardMap,
   checkKeyInCases,
   checkIsCorrect,
   renderAnswerOptions,
@@ -73,17 +73,24 @@ function RecognitionTrainer({
 
   const [settings, updateSettings] = useSettings();
 
-  const [flashCards, setFlashCards] = useLocalStorage<FlashCard<AlgWithAuf>[]>(
-    flashCardName,
-    defaultFlashCards,
-  );
+  const [flashCardMap, setFlashCardMap] = useLocalStorage<{
+    [name: string]: FlashCard<AlgWithAuf>;
+  }>(flashCardName, defaultFlashCardMap);
+
+  const cases = React.useMemo(() => {
+    return Object.keys(defaultFlashCardMap);
+  }, [defaultFlashCardMap]);
 
   const pickCaseFromFlashCards = React.useCallback(
     (cn: ColorNeutrality) => {
-      const c = randomChoice(flashCards, flashCards.map(f => f.deficiency));
-      return generateCase(c.data, { cn, preAuf: c.data.preAuf });
+      const c = randomChoice(cases, cases.map(c => flashCardMap[c].deficiency));
+      const { data } = flashCardMap[c];
+      return generateCase(data, {
+        cn,
+        preAuf: data.preAuf,
+      });
     },
-    [flashCards],
+    [cases, flashCardMap],
   );
 
   const [currentCase, setCurrentCase] = React.useState<TestCase>(() =>
@@ -102,33 +109,28 @@ function RecognitionTrainer({
 
   const takeGuess = React.useCallback(
     (guess: string) => {
-      if (currentCase) {
-        setCurrentGuess(guess);
-
-        const flashCardIndex = flashCards.findIndex(
-          f => f.data === currentCase.alg,
-        );
-        if (flashCardIndex === -1) {
-          return;
-        }
-        const flashCard = flashCards[flashCardIndex];
-        const isCorrect = checkIsCorrect(currentCase, guess);
-
-        const newDeficiency = isCorrect
-          ? flashCard.deficiency * (1 - gamma)
-          : flashCard.deficiency * (1 + gamma);
-
-        setFlashCards([
-          ...flashCards.slice(0, flashCardIndex),
-          {
-            ...flashCard,
-            deficiency: newDeficiency,
-          },
-          ...flashCards.slice(flashCardIndex + 1),
-        ]);
+      if (!currentCase) {
       }
+      const flashCard = flashCardMap[currentCase.alg.name];
+      if (!flashCard) {
+        return;
+      }
+      setCurrentGuess(guess);
+      const isCorrect = checkIsCorrect(currentCase, guess);
+
+      const newDeficiency = isCorrect
+        ? flashCard.deficiency * (1 - gamma)
+        : flashCard.deficiency * (1 + gamma);
+
+      setFlashCardMap({
+        ...flashCardMap,
+        [currentCase.alg.name]: {
+          ...flashCard,
+          deficiency: newDeficiency,
+        },
+      });
     },
-    [currentCase, flashCards, gamma, checkIsCorrect, setFlashCards],
+    [currentCase, flashCardMap, gamma, checkIsCorrect, setFlashCardMap],
   );
 
   const handleKeyup = React.useCallback(
