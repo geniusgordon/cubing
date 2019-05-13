@@ -153,17 +153,14 @@ function RecognitionTrainer({
     ],
   );
 
-  const handleCnChange = React.useCallback(
-    (e: any) => {
-      updateSettings({ colorNeutrality: e.target.value });
-      generateNextCase(settings.colorNeutrality);
-    },
-    [settings.colorNeutrality, updateSettings, generateNextCase],
-  );
-
-  const handleImageClick = React.useCallback(() => {
+  function handleCnChange(e: any) {
+    updateSettings({ colorNeutrality: e.target.value });
     generateNextCase(settings.colorNeutrality);
-  }, [settings.colorNeutrality, generateNextCase]);
+  }
+
+  function handleImageClick() {
+    generateNextCase(settings.colorNeutrality);
+  }
 
   useEventListener('keyup', handleKeyup);
 
