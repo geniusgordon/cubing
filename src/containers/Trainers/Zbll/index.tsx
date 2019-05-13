@@ -37,7 +37,7 @@ const styles = createStyles({
 interface Props extends WithStyles<typeof styles>, RouteComponentProps {}
 
 const defaultFlashCardMap: {
-  [name: string]: FlashCard<{ alg: Alg; total: number }>;
+  [name: string]: FlashCard<{ alg: Alg; count: number }>;
 } = {};
 ollGroups.forEach(oll => {
   collGroups[oll].forEach(coll => {
@@ -46,9 +46,9 @@ ollGroups.forEach(oll => {
       defaultFlashCardMap[name] = {
         data: {
           alg: { name, alg: '' },
-          total: 0,
+          count: 0,
         },
-        deficiency: 1,
+        deficiency: 100,
       };
     });
   });
@@ -62,7 +62,7 @@ function ZbllTrainer({ classes, history }: Props) {
     [name: string]: boolean;
   }>('zbll-trainer/selected-cases', {});
   const [flashCardMap, setFlashCardMap] = useLocalStorage<{
-    [name: string]: FlashCard<{ alg: Alg; total: number }>;
+    [name: string]: FlashCard<{ alg: Alg; count: number }>;
   }>('zbll-trainer/flashcard-map', defaultFlashCardMap);
   const [currentCase, setCurrentCase] = React.useState<Alg | null>(null);
 
@@ -108,8 +108,31 @@ function ZbllTrainer({ classes, history }: Props) {
     setCaseSelectorOpen(false);
   }
 
-  function handleTimerEnd() {
-    generateNextCase();
+  function handleTimerEnd(time: number) {
+    if (!currentCase) {
+      return;
+    }
+
+    const flashCard = flashCardMap[currentCase.name];
+    if (!flashCard) {
+      return null;
+    }
+
+    console.log(flashCard, time);
+    const newDeficiency =
+      (flashCard.deficiency * flashCard.data.count + time) /
+      (flashCard.data.count + 1);
+
+    setFlashCardMap({
+      ...flashCardMap,
+      [currentCase.name]: {
+        data: {
+          alg: flashCard.data.alg,
+          count: flashCard.data.count + 1,
+        },
+        deficiency: newDeficiency,
+      },
+    });
   }
 
   React.useEffect(() => {

@@ -12,7 +12,7 @@ const styles = createStyles({
 });
 
 interface Props extends WithStyles<typeof styles> {
-  onEnd(): void;
+  onEnd(time: number): void;
 }
 
 function padZero(n: number): string {
