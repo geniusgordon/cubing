@@ -1,6 +1,5 @@
 import React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router';
-import classNames from 'classnames';
 import { createStyles, withStyles, WithStyles } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
@@ -9,12 +8,13 @@ import Typography from '@material-ui/core/Typography';
 import BackIcon from '@material-ui/icons/ArrowBack';
 import { green } from '@material-ui/core/colors';
 import AppBar from '../../../components/AppBar';
-import { useLocalStorage, useTimer, TimerStatus } from '../../../hooks';
+import { useLocalStorage } from '../../../hooks';
 import { randomChoice } from '../../../utils';
 import { ollGroups, collGroups } from '../../../data/coll';
 import zbllMap from '../../../data/zbll';
 import { Alg, FlashCard } from '../../../data/types';
 import CaseSelector from './CaseSelector';
+import Timer from './Timer';
 
 const styles = createStyles({
   container: {
@@ -53,13 +53,6 @@ ollGroups.forEach(oll => {
     });
   });
 });
-
-function padZero(n: number): string {
-  if (n < 10) {
-    return `0${n}`;
-  }
-  return n.toString();
-}
 
 function ZbllTrainer({ classes, history }: Props) {
   const [caseSelectorOpen, setCaseSelectorOpen] = React.useState<boolean>(
@@ -123,8 +116,6 @@ function ZbllTrainer({ classes, history }: Props) {
     generateNextCase();
   }, [generateNextCase]);
 
-  const { time, status: timerStatus } = useTimer({ onEnd: handleTimerEnd });
-
   return (
     <>
       <AppBar
@@ -150,16 +141,8 @@ function ZbllTrainer({ classes, history }: Props) {
           {currentCase ? currentCase.alg : ''}
         </Typography>
       </Grid>
-      <Grid container justify="center">
-        <Typography
-          component="div"
-          variant="h1"
-          className={classNames(classes.time, {
-            [classes.ready]: timerStatus === TimerStatus.READY,
-          })}
-        >
-          {Math.floor(time / 100)}.{padZero(time % 100)}
-        </Typography>
+      <Grid container justify="center" className={classes.time}>
+        <Timer onEnd={handleTimerEnd} />
       </Grid>
       <CaseSelector
         open={caseSelectorOpen}
