@@ -68,7 +68,7 @@ function useTimer({
     [status, onStart],
   );
 
-  useInterval(handleInterval, 100);
+  useInterval(handleInterval, 10);
   useEventListener('keydown', handleKeyDown);
   useEventListener('keyup', handleKeyUp);
 

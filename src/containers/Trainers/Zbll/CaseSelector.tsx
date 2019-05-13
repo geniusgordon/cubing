@@ -40,13 +40,14 @@ const styles = createStyles({
 interface Props extends WithStyles<typeof styles>, WithTheme {
   open: boolean;
   onClose(): void;
+  onSubmit(cases: { [name: string]: boolean }): void;
 }
 
 function Transition(props: any) {
   return <Slide direction="up" {...props} />;
 }
 
-function CaseSelector({ classes, theme, open, onClose }: Props) {
+function CaseSelector({ classes, theme, open, onClose, onSubmit }: Props) {
   const [selectedCases, setCases] = React.useState<{ [name: string]: boolean }>(
     {},
   );
@@ -151,6 +152,10 @@ function CaseSelector({ classes, theme, open, onClose }: Props) {
     [selectedCases],
   );
 
+  const handleSubmit = React.useCallback(() => {
+    onSubmit(selectedCases);
+  }, [selectedCases, onSubmit]);
+
   return (
     <Dialog
       fullScreen
@@ -166,7 +171,7 @@ function CaseSelector({ classes, theme, open, onClose }: Props) {
           <Typography variant="h6" color="inherit" className={classes.flex}>
             Zbll Case Selector
           </Typography>
-          <Button color="inherit" onClick={onClose}>
+          <Button color="inherit" onClick={handleSubmit}>
             Done
           </Button>
         </Toolbar>
