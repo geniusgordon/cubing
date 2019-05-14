@@ -116,3 +116,26 @@ export function randomChoice<T>(choices: T[], probs: number[]): T {
   }
   return choices[choices.length - 1];
 }
+
+export function inverseAlg(alg: string): string {
+  const tokens = [];
+  const chars = alg.replace(/[()]/g, '').split('');
+  let i = 0;
+  while (i < chars.length) {
+    if (/[a-zA-Z]/.test(chars[i])) {
+      if (chars[i + 1] === '2') {
+        tokens.push(chars[i] + chars[i + 1]);
+        i += 2;
+      } else if (chars[i + 1] === "'") {
+        tokens.push(chars[i]);
+        i += 2;
+      } else {
+        tokens.push(chars[i] + "'");
+        i++;
+      }
+    } else {
+      i++;
+    }
+  }
+  return tokens.reverse().join(' ');
+}

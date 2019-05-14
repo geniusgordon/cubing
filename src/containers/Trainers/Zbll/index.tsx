@@ -9,7 +9,7 @@ import BackIcon from '@material-ui/icons/ArrowBack';
 import { green } from '@material-ui/core/colors';
 import AppBar from '../../../components/AppBar';
 import { useLocalStorage } from '../../../hooks';
-import { randomChoice } from '../../../utils';
+import { randomChoice, inverseAlg } from '../../../utils';
 import { ollGroups, collGroups } from '../../../data/coll';
 import zbllMap from '../../../data/zbll';
 import { Alg, FlashCard } from '../../../data/types';
@@ -161,7 +161,7 @@ function ZbllTrainer({ classes, history }: Props) {
       </Grid>
       <Grid container justify="center">
         <Typography component="div" variant="h4" className={classes.scramble}>
-          {currentCase ? currentCase.alg : ''}
+          {currentCase ? inverseAlg(currentCase.alg) : ''}
         </Typography>
       </Grid>
       <Grid container justify="center" className={classes.time}>
