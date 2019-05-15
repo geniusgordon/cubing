@@ -27,8 +27,8 @@ const styles = createStyles({
     marginTop: 30,
   },
   time: {
-    marginTop: 50,
-    marginBottom: 50,
+    marginTop: 100,
+    marginBottom: 100,
   },
 });
 
@@ -117,6 +117,17 @@ function ZbllTrainer({ classes, history }: Props) {
     setCaseSelectorOpen(false);
   }
 
+  function handleHistoryDelete(index: number) {
+    if (index < 0 || index >= sessionHistory.length) {
+      return;
+    }
+
+    setSessionHistory([
+      ...sessionHistory.slice(0, index),
+      ...sessionHistory.slice(index + 1),
+    ]);
+  }
+
   const handleTimerEnd = React.useCallback(
     (time: number) => {
       if (!currentCase) {
@@ -195,6 +206,7 @@ function ZbllTrainer({ classes, history }: Props) {
         <SessionHistory
           sessionHistory={sessionHistory}
           setSessionHistory={setSessionHistory}
+          onDelete={handleHistoryDelete}
         />
       </Grid>
       <CaseSelector
