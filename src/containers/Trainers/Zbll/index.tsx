@@ -6,15 +6,15 @@ import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import BackIcon from '@material-ui/icons/ArrowBack';
-import { green } from '@material-ui/core/colors';
 import AppBar from '../../../components/AppBar';
 import { useLocalStorage } from '../../../hooks';
 import { randomChoice, inverseAlg } from '../../../utils';
 import { ollGroups, collGroups } from '../../../data/coll';
 import zbllMap from '../../../data/zbll';
-import { Alg, FlashCard } from '../../../data/types';
+import { Alg, FlashCard, History } from '../../../data/types';
 import CaseSelector from './CaseSelector';
 import Timer from './Timer';
+import SessionHistory from './SessionHistory';
 
 const styles = createStyles({
   container: {
@@ -28,9 +28,7 @@ const styles = createStyles({
   },
   time: {
     marginTop: 50,
-  },
-  ready: {
-    color: green[500],
+    marginBottom: 50,
   },
 });
 
@@ -48,7 +46,7 @@ ollGroups.forEach(oll => {
           alg: { name, alg: '' },
           count: 0,
         },
-        deficiency: 100,
+        deficiency: 0,
       };
     });
   });
@@ -58,12 +56,20 @@ function ZbllTrainer({ classes, history }: Props) {
   const [caseSelectorOpen, setCaseSelectorOpen] = React.useState<boolean>(
     false,
   );
+
   const [selectedCases, setCases] = useLocalStorage<{
     [name: string]: boolean;
   }>('zbll-trainer/selected-cases', {});
+
   const [flashCardMap, setFlashCardMap] = useLocalStorage<{
     [name: string]: FlashCard<{ alg: Alg; count: number }>;
   }>('zbll-trainer/flashcard-map', defaultFlashCardMap);
+
+  const [sessionHistory, setSessionHistory] = useLocalStorage<History[]>(
+    'zbll-trainer/session-history',
+    [],
+  );
+
   const [currentCase, setCurrentCase] = React.useState<Alg | null>(null);
 
   const cases = React.useMemo(() => {
@@ -75,7 +81,10 @@ function ZbllTrainer({ classes, history }: Props) {
   }
 
   const pickCaseFromFlashCards = React.useCallback(() => {
-    const c = randomChoice(cases, cases.map(c => flashCardMap[c].deficiency));
+    const probs = cases.map(c =>
+      flashCardMap[c].data.count === 0 ? 1000 : flashCardMap[c].deficiency,
+    );
+    const c = randomChoice(cases, probs);
     const flashCard = flashCardMap[c];
     if (!flashCard) {
       return null;
@@ -108,32 +117,48 @@ function ZbllTrainer({ classes, history }: Props) {
     setCaseSelectorOpen(false);
   }
 
-  function handleTimerEnd(time: number) {
-    if (!currentCase) {
-      return;
-    }
+  const handleTimerEnd = React.useCallback(
+    (time: number) => {
+      if (!currentCase) {
+        return;
+      }
 
-    const flashCard = flashCardMap[currentCase.name];
-    if (!flashCard) {
-      return null;
-    }
+      const flashCard = flashCardMap[currentCase.name];
+      if (!flashCard) {
+        return null;
+      }
 
-    console.log(flashCard, time);
-    const newDeficiency =
-      (flashCard.deficiency * flashCard.data.count + time) /
-      (flashCard.data.count + 1);
-
-    setFlashCardMap({
-      ...flashCardMap,
-      [currentCase.name]: {
-        data: {
-          alg: flashCard.data.alg,
-          count: flashCard.data.count + 1,
+      setSessionHistory([
+        ...sessionHistory,
+        {
+          alg: currentCase,
+          time,
         },
-        deficiency: newDeficiency,
-      },
-    });
-  }
+      ]);
+
+      const newDeficiency =
+        (flashCard.deficiency * flashCard.data.count + time) /
+        (flashCard.data.count + 1);
+
+      setFlashCardMap({
+        ...flashCardMap,
+        [currentCase.name]: {
+          data: {
+            alg: flashCard.data.alg,
+            count: flashCard.data.count + 1,
+          },
+          deficiency: newDeficiency,
+        },
+      });
+    },
+    [
+      currentCase,
+      sessionHistory,
+      setSessionHistory,
+      flashCardMap,
+      setFlashCardMap,
+    ],
+  );
 
   React.useEffect(() => {
     generateNextCase();
@@ -149,23 +174,28 @@ function ZbllTrainer({ classes, history }: Props) {
           </IconButton>
         }
       />
-      <Grid container justify="center" className={classes.container}>
+      <Grid
+        container
+        direction="column"
+        alignItems="center"
+        className={classes.container}
+      >
         <Button variant="outlined" color="primary" onClick={openCaseSelector}>
           Select Cases
         </Button>
-      </Grid>
-      <Grid container justify="center">
         <Typography className={classes.selectedCount}>
           {cases.length} selected
         </Typography>
-      </Grid>
-      <Grid container justify="center">
         <Typography component="div" variant="h4" className={classes.scramble}>
           {currentCase ? inverseAlg(currentCase.alg) : ''}
         </Typography>
-      </Grid>
-      <Grid container justify="center" className={classes.time}>
-        <Timer onEnd={handleTimerEnd} />
+        <Grid item className={classes.time} style={{ flex: 1 }}>
+          <Timer onEnd={handleTimerEnd} />
+        </Grid>
+        <SessionHistory
+          sessionHistory={sessionHistory}
+          setSessionHistory={setSessionHistory}
+        />
       </Grid>
       <CaseSelector
         open={caseSelectorOpen}

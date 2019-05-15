@@ -139,3 +139,14 @@ export function inverseAlg(alg: string): string {
   }
   return tokens.reverse().join(' ');
 }
+
+function padZero(n: number): string {
+  if (n < 10) {
+    return `0${n}`;
+  }
+  return n.toString();
+}
+
+export function formatTime(time: number): string {
+  return `${Math.floor(time / 100)}.${padZero(time % 100)}`;
+}

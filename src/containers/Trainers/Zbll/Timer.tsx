@@ -4,6 +4,7 @@ import { createStyles, withStyles, WithStyles } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import { green } from '@material-ui/core/colors';
 import { useTimer, TimerStatus } from '../../../hooks';
+import { formatTime } from '../../../utils';
 
 const styles = createStyles({
   ready: {
@@ -13,13 +14,6 @@ const styles = createStyles({
 
 interface Props extends WithStyles<typeof styles> {
   onEnd(time: number): void;
-}
-
-function padZero(n: number): string {
-  if (n < 10) {
-    return `0${n}`;
-  }
-  return n.toString();
 }
 
 function Timer({ classes, onEnd }: Props) {
@@ -33,7 +27,7 @@ function Timer({ classes, onEnd }: Props) {
         [classes.ready]: timerStatus === TimerStatus.READY,
       })}
     >
-      {Math.floor(time / 100)}.{padZero(time % 100)}
+      {formatTime(time)}
     </Typography>
   );
 }

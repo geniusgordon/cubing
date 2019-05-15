@@ -31,3 +31,8 @@ export enum ColorNeutrality {
 }
 
 export type Scramble = string[];
+
+export interface History {
+  alg: Alg;
+  time: number;
+}
