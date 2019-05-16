@@ -128,6 +128,10 @@ function ZbllTrainer({ classes, history }: Props) {
     ]);
   }
 
+  function handleHistoryClear() {
+    setSessionHistory([]);
+  }
+
   const handleTimerEnd = React.useCallback(
     (time: number) => {
       if (!currentCase) {
@@ -207,6 +211,7 @@ function ZbllTrainer({ classes, history }: Props) {
           sessionHistory={sessionHistory}
           setSessionHistory={setSessionHistory}
           onDelete={handleHistoryDelete}
+          onClear={handleHistoryClear}
         />
       </Grid>
       <CaseSelector

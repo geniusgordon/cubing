@@ -10,11 +10,14 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { green } from '@material-ui/core/colors';
 import CubeImage from '../../../components/CubeImage';
 import { History } from '../../../data/types';
-import { inverseAlg, formatTime } from '../../../utils';
+import { inverseAlg, formatTime, averageOfN } from '../../../utils';
 
 const styles = createStyles({
   container: {
     paddingBottom: 30,
+  },
+  statContainer: {
+    paddingBottom: 16,
   },
   selected: {
     color: 'white',
@@ -26,6 +29,29 @@ interface Props extends WithStyles<typeof styles> {
   sessionHistory: Array<History>;
   setSessionHistory(v: React.SetStateAction<History[]>): void;
   onDelete(index: number): void;
+  onClear(): void;
+}
+
+interface StatProps {
+  title: string;
+  time: number | null;
+}
+
+enum AlertType {
+  Delete,
+  Clear,
+}
+
+function StatItem({ title, time }: StatProps) {
+  if (time === null) {
+    return null;
+  }
+  return (
+    <Grid item>
+      <Typography>{title}</Typography>
+      <Typography variant="h5">{formatTime(time)}</Typography>
+    </Grid>
+  );
 }
 
 function SessionHistory({
@@ -33,26 +59,56 @@ function SessionHistory({
   sessionHistory,
   setSessionHistory,
   onDelete,
+  onClear,
 }: Props) {
-  const [alertOpen, setAlertOpen] = React.useState<boolean>(false);
+  const [alertType, setAlertType] = React.useState<AlertType | null>(null);
   const [selectedIndex, setIndex] = React.useState<number>(0);
   const history = sessionHistory[selectedIndex];
+
+  const stats: { [name: string]: number | null } = React.useMemo(() => {
+    const len = sessionHistory.length;
+    const bestTime =
+      len > 0
+        ? sessionHistory.reduce((val, acc) => Math.min(val, acc.time), 1e9)
+        : null;
+    const worstTime =
+      len > 0
+        ? sessionHistory.reduce((val, acc) => Math.max(val, acc.time), 0)
+        : null;
+    const ao5 = averageOfN(sessionHistory.map(h => h.time), 5);
+    const ao12 = averageOfN(sessionHistory.map(h => h.time), 12);
+
+    return {
+      bestTime,
+      worstTime,
+      ao5,
+      ao12,
+    };
+  }, [sessionHistory]);
 
   function handleHistorySelect(index: number) {
     setIndex(index);
   }
 
-  function handleAlertOpen() {
-    setAlertOpen(true);
+  function showDeleteAlert() {
+    setAlertType(AlertType.Delete);
+  }
+
+  function showClearAlert() {
+    setAlertType(AlertType.Clear);
   }
 
   function handleAlertClose() {
-    setAlertOpen(false);
+    setAlertType(null);
   }
 
-  function handleDelete() {
-    setAlertOpen(false);
-    onDelete(selectedIndex);
+  function handleConfirm() {
+    setAlertType(null);
+    if (alertType === AlertType.Delete) {
+      onDelete(selectedIndex);
+    } else if (alertType === AlertType.Clear) {
+      onClear();
+    }
   }
 
   React.useEffect(() => {
@@ -64,21 +120,48 @@ function SessionHistory({
       <Grid container justify="center" className={classes.container}>
         <Grid item xs={10} sm={4}>
           {history && (
-            <Grid direction="column" container alignItems="center">
-              <Typography gutterBottom variant="h5" component="p">
+            <Grid direction="column" container>
+              <Grid container spacing={16} alignItems="center">
+                <Grid item>
+                  <Typography variant="h4">Solve #{selectedIndex}</Typography>
+                </Grid>
+                <Grid item>
+                  <Button
+                    size="small"
+                    color="primary"
+                    onClick={showDeleteAlert}
+                  >
+                    Delete
+                  </Button>
+                </Grid>
+              </Grid>
+              <Typography>Scramble</Typography>
+              <Typography variant="h5">
                 {inverseAlg(history.alg.alg)}
               </Typography>
-              <Typography gutterBottom variant="h6" component="p">
-                {formatTime(history.time)}
-              </Typography>
-              <Button size="small" color="primary" onClick={handleAlertOpen}>
-                Delete
-              </Button>
+              <Typography>Time</Typography>
+              <Typography variant="h5">{formatTime(history.time)}</Typography>
               <CubeImage alg={history.alg.alg} />
             </Grid>
           )}
         </Grid>
         <Grid item xs={10} sm={4}>
+          <Grid container spacing={16} alignItems="center">
+            <Grid item>
+              <Typography variant="h4">Session History</Typography>
+            </Grid>
+            <Grid item>
+              <Button size="small" color="primary" onClick={showClearAlert}>
+                Clear
+              </Button>
+            </Grid>
+          </Grid>
+          <Grid container spacing={16} className={classes.statContainer}>
+            <StatItem title="Best" time={stats.bestTime} />
+            <StatItem title="Worst" time={stats.worstTime} />
+            <StatItem title="Ao5" time={stats.ao5} />
+            <StatItem title="Ao12" time={stats.ao12} />
+          </Grid>
           <Grid container spacing={8}>
             {sessionHistory.map((h, i) => (
               <Grid item key={`${h.alg.name}-${i}`}>
@@ -97,7 +180,7 @@ function SessionHistory({
         </Grid>
       </Grid>
       <Dialog
-        open={alertOpen}
+        open={alertType !== null}
         onClose={handleAlertClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
@@ -109,7 +192,7 @@ function SessionHistory({
           <Button onClick={handleAlertClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleDelete} color="primary" autoFocus>
+          <Button onClick={handleConfirm} color="primary" autoFocus>
             Confirm
           </Button>
         </DialogActions>

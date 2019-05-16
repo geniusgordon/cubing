@@ -148,5 +148,13 @@ function padZero(n: number): string {
 }
 
 export function formatTime(time: number): string {
-  return `${Math.floor(time / 100)}.${padZero(time % 100)}`;
+  return `${Math.floor(time / 100)}.${padZero(Math.floor(time % 100))}`;
+}
+
+export function averageOfN(arr: number[], n: number): number | null {
+  console.log('averageOfN', arr, n);
+  if (arr.length < n) {
+    return null;
+  }
+  return arr.reduce((val, acc) => val + acc, 0) / n;
 }
