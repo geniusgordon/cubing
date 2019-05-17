@@ -55,7 +55,7 @@ ollGroups.forEach(oll => {
 
 function ZbllTrainer({ classes, history }: Props) {
   const [caseSelectorOpen, setCaseSelectorOpen] = React.useState<boolean>(
-    true,
+    false,
   );
 
   const [selectedCases, setCases] = useLocalStorage<{

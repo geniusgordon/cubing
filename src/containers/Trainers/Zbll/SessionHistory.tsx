@@ -121,8 +121,8 @@ function SessionHistory({
     <>
       <div className={classes.container}>
         <Grid container justify="center" spacing={16}>
-          <Grid item xs={10} sm={4}>
-            {history && (
+          {history && (
+            <Grid item xs={10} sm={4}>
               <Grid direction="column" container>
                 <Grid container spacing={16} alignItems="center">
                   <Grid item>
@@ -146,41 +146,43 @@ function SessionHistory({
                 <Typography variant="h5">{formatTime(history.time)}</Typography>
                 <CubeImage alg={history.alg.alg} />
               </Grid>
-            )}
-          </Grid>
-          <Grid item xs={10} sm={4}>
-            <Grid container spacing={16} alignItems="center">
-              <Grid item>
-                <Typography variant="h4">Times</Typography>
-              </Grid>
-              <Grid item>
-                <Button size="small" color="primary" onClick={showClearAlert}>
-                  Clear
-                </Button>
-              </Grid>
             </Grid>
-            <Grid container spacing={16} className={classes.statContainer}>
-              <StatItem title="Best" time={stats.bestTime} />
-              <StatItem title="Worst" time={stats.worstTime} />
-              <StatItem title="Ao5" time={stats.ao5} />
-              <StatItem title="Ao12" time={stats.ao12} />
-            </Grid>
-            <Grid container spacing={8}>
-              {sessionHistory.map((h, i) => (
-                <Grid item key={`${h.alg.name}-${i}`}>
-                  <Button
-                    size="small"
-                    onClick={() => handleHistorySelect(i)}
-                    className={classNames({
-                      [classes.selected]: i === selectedIndex,
-                    })}
-                  >
-                    {formatTime(h.time)}
+          )}
+          {sessionHistory.length > 0 && (
+            <Grid item xs={10} sm={4}>
+              <Grid container spacing={16} alignItems="center">
+                <Grid item>
+                  <Typography variant="h4">Times</Typography>
+                </Grid>
+                <Grid item>
+                  <Button size="small" color="primary" onClick={showClearAlert}>
+                    Clear
                   </Button>
                 </Grid>
-              ))}
+              </Grid>
+              <Grid container spacing={16} className={classes.statContainer}>
+                <StatItem title="Best" time={stats.bestTime} />
+                <StatItem title="Worst" time={stats.worstTime} />
+                <StatItem title="Ao5" time={stats.ao5} />
+                <StatItem title="Ao12" time={stats.ao12} />
+              </Grid>
+              <Grid container spacing={8}>
+                {sessionHistory.map((h, i) => (
+                  <Grid item key={`${h.alg.name}-${i}`}>
+                    <Button
+                      size="small"
+                      onClick={() => handleHistorySelect(i)}
+                      className={classNames({
+                        [classes.selected]: i === selectedIndex,
+                      })}
+                    >
+                      {formatTime(h.time)}
+                    </Button>
+                  </Grid>
+                ))}
+              </Grid>
             </Grid>
-          </Grid>
+          )}
         </Grid>
       </div>
       <Dialog

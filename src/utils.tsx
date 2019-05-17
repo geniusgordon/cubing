@@ -152,7 +152,6 @@ export function formatTime(time: number): string {
 }
 
 export function averageOfN(arr: number[], n: number): number | null {
-  console.log('averageOfN', arr, n);
   if (arr.length < n) {
     return null;
   }
