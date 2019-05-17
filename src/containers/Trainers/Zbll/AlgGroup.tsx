@@ -7,6 +7,7 @@ import {
   WithStyles,
   withTheme,
   WithTheme,
+  Theme,
 } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
@@ -16,32 +17,33 @@ import CubeImage from '../../../components/CubeImage';
 import { collGroups } from '../../../data/coll';
 import { Alg } from '../../../data/types';
 
-const styles = createStyles({
-  container: {
-    marginBottom: 10,
-  },
-  imageContainer: {
-    cursor: 'pointer',
-    position: 'relative',
-    margin: 5,
-  },
-  buttonContainer: {
-    height: 36,
-    marginTop: 10,
-  },
-  active: {
-    backgroundColor: green[300],
-  },
-  count: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    color: grey[50],
-    backgroundColor: grey[600],
-    paddingLeft: 5,
-    paddingRight: 5,
-  },
-});
+const styles = (theme: Theme) =>
+  createStyles({
+    container: {
+      marginBottom: theme.spacing.unit,
+    },
+    imageContainer: {
+      cursor: 'pointer',
+      position: 'relative',
+      margin: 5,
+    },
+    buttonContainer: {
+      height: 36,
+      marginTop: theme.spacing.unit,
+    },
+    active: {
+      backgroundColor: green[300],
+    },
+    count: {
+      position: 'absolute',
+      bottom: 0,
+      right: 0,
+      color: grey[50],
+      backgroundColor: grey[600],
+      paddingLeft: 5,
+      paddingRight: 5,
+    },
+  });
 
 interface Props extends WithStyles<typeof styles>, WithTheme {
   active?: boolean;

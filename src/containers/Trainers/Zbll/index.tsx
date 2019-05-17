@@ -1,6 +1,6 @@
 import React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { createStyles, withStyles, WithStyles } from '@material-ui/core';
+import { createStyles, withStyles, WithStyles, Theme } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
@@ -16,21 +16,22 @@ import CaseSelector from './CaseSelector';
 import Timer from './Timer';
 import SessionHistory from './SessionHistory';
 
-const styles = createStyles({
-  container: {
-    marginTop: 30,
-  },
-  selectedCount: {
-    marginTop: 10,
-  },
-  scramble: {
-    marginTop: 30,
-  },
-  time: {
-    marginTop: 100,
-    marginBottom: 100,
-  },
-});
+const styles = (theme: Theme) =>
+  createStyles({
+    container: {
+      marginTop: theme.spacing.unit * 3,
+    },
+    selectedCount: {
+      marginTop: theme.spacing.unit,
+    },
+    scramble: {
+      marginTop: theme.spacing.unit * 2,
+    },
+    time: {
+      marginTop: theme.spacing.unit * 5,
+      marginBottom: theme.spacing.unit * 5,
+    },
+  });
 
 interface Props extends WithStyles<typeof styles>, RouteComponentProps {}
 
@@ -54,7 +55,7 @@ ollGroups.forEach(oll => {
 
 function ZbllTrainer({ classes, history }: Props) {
   const [caseSelectorOpen, setCaseSelectorOpen] = React.useState<boolean>(
-    false,
+    true,
   );
 
   const [selectedCases, setCases] = useLocalStorage<{

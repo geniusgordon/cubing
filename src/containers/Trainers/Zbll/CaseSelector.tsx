@@ -5,6 +5,7 @@ import {
   WithStyles,
   withTheme,
   WithTheme,
+  Theme,
 } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import Dialog from '@material-ui/core/Dialog';
@@ -21,21 +22,22 @@ import { Alg } from '../../../data/types';
 import AlgGroup from './AlgGroup';
 import ZbllCase from './ZbllCase';
 
-const styles = createStyles({
-  dialog: {
-    width: '100%',
-    overflowX: 'hidden',
-  },
-  container: {
-    marginTop: 30,
-  },
-  appBar: {
-    position: 'relative',
-  },
-  flex: {
-    flex: 1,
-  },
-});
+const styles = (theme: Theme) =>
+  createStyles({
+    dialog: {
+      width: '100%',
+      overflowX: 'hidden',
+    },
+    container: {
+      marginTop: theme.spacing.unit,
+    },
+    appBar: {
+      position: 'relative',
+    },
+    flex: {
+      flex: 1,
+    },
+  });
 
 interface Props extends WithStyles<typeof styles>, WithTheme {
   open: boolean;

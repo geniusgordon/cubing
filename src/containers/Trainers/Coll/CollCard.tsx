@@ -11,9 +11,6 @@ import CubeImage from '../../../components/CubeImage';
 import { Alg, TestCase } from '../../../data/types';
 
 const styles = createStyles({
-  buttonRow: {
-    marginTop: 20,
-  },
   correct: {
     color: 'white',
     backgroundColor: green[500],

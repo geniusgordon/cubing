@@ -6,6 +6,7 @@ import {
   WithStyles,
   withTheme,
   WithTheme,
+  Theme,
 } from '@material-ui/core';
 import { unstable_useMediaQuery as useMediaQuery } from '@material-ui/core/useMediaQuery';
 import IconButton from '@material-ui/core/IconButton';
@@ -27,17 +28,18 @@ import {
   TestCase,
 } from '../../data/types';
 
-const styles = createStyles({
-  container: {
-    marginTop: 30,
-  },
-  cubeImage: {
-    cursor: 'pointer',
-  },
-  radioGroup: {
-    flexDirection: 'row',
-  },
-});
+const styles = (theme: Theme) =>
+  createStyles({
+    container: {
+      marginTop: theme.spacing.unit * 5,
+    },
+    cubeImage: {
+      cursor: 'pointer',
+    },
+    radioGroup: {
+      flexDirection: 'row',
+    },
+  });
 
 interface Props
   extends WithStyles<typeof styles>,

@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import { createStyles, withStyles, WithStyles } from '@material-ui/core';
+import { createStyles, withStyles, WithStyles, Theme } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
@@ -12,18 +12,20 @@ import CubeImage from '../../../components/CubeImage';
 import { History } from '../../../data/types';
 import { inverseAlg, formatTime, averageOfN } from '../../../utils';
 
-const styles = createStyles({
-  container: {
-    paddingBottom: 30,
-  },
-  statContainer: {
-    paddingBottom: 16,
-  },
-  selected: {
-    color: 'white',
-    backgroundColor: green[300],
-  },
-});
+const styles = (theme: Theme) =>
+  createStyles({
+    container: {
+      width: '100%',
+      padding: theme.spacing.unit,
+    },
+    statContainer: {
+      paddingBottom: theme.spacing.unit,
+    },
+    selected: {
+      color: 'white',
+      backgroundColor: green[300],
+    },
+  });
 
 interface Props extends WithStyles<typeof styles> {
   sessionHistory: Array<History>;
@@ -117,68 +119,70 @@ function SessionHistory({
 
   return (
     <>
-      <Grid container justify="center" className={classes.container}>
-        <Grid item xs={10} sm={4}>
-          {history && (
-            <Grid direction="column" container>
-              <Grid container spacing={16} alignItems="center">
-                <Grid item>
-                  <Typography variant="h4">Solve #{selectedIndex}</Typography>
+      <div className={classes.container}>
+        <Grid container justify="center" spacing={16}>
+          <Grid item xs={10} sm={4}>
+            {history && (
+              <Grid direction="column" container>
+                <Grid container spacing={16} alignItems="center">
+                  <Grid item>
+                    <Typography variant="h4">Solve #{selectedIndex}</Typography>
+                  </Grid>
+                  <Grid item>
+                    <Button
+                      size="small"
+                      color="primary"
+                      onClick={showDeleteAlert}
+                    >
+                      Delete
+                    </Button>
+                  </Grid>
                 </Grid>
-                <Grid item>
-                  <Button
-                    size="small"
-                    color="primary"
-                    onClick={showDeleteAlert}
-                  >
-                    Delete
-                  </Button>
-                </Grid>
+                <Typography>Scramble</Typography>
+                <Typography variant="h5">
+                  {inverseAlg(history.alg.alg)}
+                </Typography>
+                <Typography>Time</Typography>
+                <Typography variant="h5">{formatTime(history.time)}</Typography>
+                <CubeImage alg={history.alg.alg} />
               </Grid>
-              <Typography>Scramble</Typography>
-              <Typography variant="h5">
-                {inverseAlg(history.alg.alg)}
-              </Typography>
-              <Typography>Time</Typography>
-              <Typography variant="h5">{formatTime(history.time)}</Typography>
-              <CubeImage alg={history.alg.alg} />
-            </Grid>
-          )}
-        </Grid>
-        <Grid item xs={10} sm={4}>
-          <Grid container spacing={16} alignItems="center">
-            <Grid item>
-              <Typography variant="h4">Session History</Typography>
-            </Grid>
-            <Grid item>
-              <Button size="small" color="primary" onClick={showClearAlert}>
-                Clear
-              </Button>
-            </Grid>
+            )}
           </Grid>
-          <Grid container spacing={16} className={classes.statContainer}>
-            <StatItem title="Best" time={stats.bestTime} />
-            <StatItem title="Worst" time={stats.worstTime} />
-            <StatItem title="Ao5" time={stats.ao5} />
-            <StatItem title="Ao12" time={stats.ao12} />
-          </Grid>
-          <Grid container spacing={8}>
-            {sessionHistory.map((h, i) => (
-              <Grid item key={`${h.alg.name}-${i}`}>
-                <Button
-                  size="small"
-                  onClick={() => handleHistorySelect(i)}
-                  className={classNames({
-                    [classes.selected]: i === selectedIndex,
-                  })}
-                >
-                  {formatTime(h.time)}
+          <Grid item xs={10} sm={4}>
+            <Grid container spacing={16} alignItems="center">
+              <Grid item>
+                <Typography variant="h4">Times</Typography>
+              </Grid>
+              <Grid item>
+                <Button size="small" color="primary" onClick={showClearAlert}>
+                  Clear
                 </Button>
               </Grid>
-            ))}
+            </Grid>
+            <Grid container spacing={16} className={classes.statContainer}>
+              <StatItem title="Best" time={stats.bestTime} />
+              <StatItem title="Worst" time={stats.worstTime} />
+              <StatItem title="Ao5" time={stats.ao5} />
+              <StatItem title="Ao12" time={stats.ao12} />
+            </Grid>
+            <Grid container spacing={8}>
+              {sessionHistory.map((h, i) => (
+                <Grid item key={`${h.alg.name}-${i}`}>
+                  <Button
+                    size="small"
+                    onClick={() => handleHistorySelect(i)}
+                    className={classNames({
+                      [classes.selected]: i === selectedIndex,
+                    })}
+                  >
+                    {formatTime(h.time)}
+                  </Button>
+                </Grid>
+              ))}
+            </Grid>
           </Grid>
         </Grid>
-      </Grid>
+      </div>
       <Dialog
         open={alertType !== null}
         onClose={handleAlertClose}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { createStyles, withStyles, WithStyles } from '@material-ui/core';
+import { createStyles, withStyles, WithStyles, Theme } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import BackIcon from '@material-ui/icons/ArrowBack';
@@ -16,18 +16,19 @@ import { useSettings } from '../../hooks';
 import { generateCrossScramble } from '../../utils';
 import { Scramble } from '../../data/types';
 
-const styles = createStyles({
-  container: {
-    marginTop: 30,
-  },
-  button: {
-    marginTop: 30,
-  },
-  paper: {
-    padding: 30,
-    margin: 30,
-  },
-});
+const styles = (theme: Theme) =>
+  createStyles({
+    container: {
+      marginTop: theme.spacing.unit * 5,
+    },
+    button: {
+      marginTop: theme.spacing.unit * 5,
+    },
+    paper: {
+      padding: theme.spacing.unit * 5,
+      margin: theme.spacing.unit * 5,
+    },
+  });
 
 interface Props extends WithStyles<typeof styles>, RouteComponentProps {}
 

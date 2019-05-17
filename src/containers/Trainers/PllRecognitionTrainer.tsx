@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import { createStyles, withStyles, WithStyles } from '@material-ui/core';
+import { createStyles, withStyles, WithStyles, Theme } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import { red, green } from '@material-ui/core/colors';
@@ -8,25 +8,26 @@ import pllMap, { pllGroups, pllAlgs } from '../../data/pll';
 import { AlgWithAuf, FlashCard, TestCase } from '../../data/types';
 import RecognitionTrainer from './RecognitionTrainer';
 
-const styles = createStyles({
-  buttonRow: {
-    marginTop: 10,
-  },
-  correct: {
-    color: 'white',
-    backgroundColor: green[500],
-    '&:hover': {
+const styles = (theme: Theme) =>
+  createStyles({
+    buttonRow: {
+      marginTop: theme.spacing.unit,
+    },
+    correct: {
+      color: 'white',
       backgroundColor: green[500],
+      '&:hover': {
+        backgroundColor: green[500],
+      },
     },
-  },
-  wrong: {
-    color: 'white',
-    backgroundColor: red[500],
-    '&:hover': {
+    wrong: {
+      color: 'white',
       backgroundColor: red[500],
+      '&:hover': {
+        backgroundColor: red[500],
+      },
     },
-  },
-});
+  });
 
 interface Props extends WithStyles<typeof styles> {}
 
