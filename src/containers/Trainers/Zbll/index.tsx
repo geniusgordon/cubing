@@ -123,10 +123,32 @@ function ZbllTrainer({ classes, history }: Props) {
       return;
     }
 
+    const case_ = sessionHistory[index];
+    const flashCard = flashCardMap[case_.alg.name];
+
     setSessionHistory([
       ...sessionHistory.slice(0, index),
       ...sessionHistory.slice(index + 1),
     ]);
+
+    if (!flashCard) {
+      return null;
+    }
+
+    const newDeficiency =
+      (flashCard.deficiency * flashCard.data.count - case_.time) /
+      (flashCard.data.count - 1);
+
+    setFlashCardMap({
+      ...flashCardMap,
+      [case_.alg.name]: {
+        data: {
+          alg: flashCard.data.alg,
+          count: flashCard.data.count - 1,
+        },
+        deficiency: newDeficiency,
+      },
+    });
   }
 
   function handleHistoryClear() {
