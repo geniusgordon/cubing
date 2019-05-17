@@ -155,5 +155,5 @@ export function averageOfN(arr: number[], n: number): number | null {
   if (arr.length < n) {
     return null;
   }
-  return arr.reduce((val, acc) => val + acc, 0) / n;
+  return arr.slice(arr.length - n).reduce((val, acc) => val + acc, 0) / n;
 }
